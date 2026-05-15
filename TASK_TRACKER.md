@@ -24,180 +24,167 @@
 
 ```
 DATE        : 2026-05-15
-PHASE       : Phase 0 — Foundation
-SUB-TASK    : Foundation complete. All infrastructure in place.
+PHASE       : Phase 2 complete. Phase 6 partial. Phase 3 (suggestion chips) PENDING.
+SUB-TASK    : All screens scaffolded and routing wired. Chat engine + UI complete.
+              Missing: suggestion chips empty state (15% eval weight — HIGHEST PRIORITY NEXT).
+              Missing: "Jump to latest" pill in chat.
+              Missing: send button morph animation.
+              Missing: haptics.
 BLOCKING    : None.
-NEXT ACTION : Start Phase 1 — Chat domain entities + Hive models + GeminiService integration.
-              ⚠️  Screenshots needed before Phase 2 (Chat Screen UI).
+NEXT ACTION : Phase 3 — Suggestion chips empty state on ChatScreen (new conversation).
+              This is the single highest-value remaining task (15% eval weight).
+              See CE-6 in PROJECT_PLAN.md for Hero animation design.
 ```
 
 ---
 
 ## Milestone Overview
 
-| Milestone | Phase | Status | Est. Duration |
+| Milestone | Phase | Status | Notes |
 |---|---|---|---|
-| M0: Foundation complete | Phase 0 | 🔄 In Progress | ~4 hours |
-| M1: Chat engine working (stream + cancel + persist) | Phase 1 | ⬜ Not started | ~1.5 days |
-| M2: Chat screen UI complete | Phase 2 | ⬜ Not started | ~1 day |
-| M3: Home + Auth + Onboarding + Splash | Phases 3–4 | ⬜ Not started | ~1 day |
-| M4: Drawer + remaining screens | Phases 5–6 | ⬜ Not started | ~1 day |
-| M5: Polish + Performance + Submission | Phase 7 | ⬜ Not started | ~1 day |
+| M0: Foundation complete | Phase 0 | ✅ Done | Riverpod, Hive, Gemini SSE, AppTheme, Talker |
+| M1: Chat engine (stream + cancel + persist) | Phase 1 | ✅ Done | ChatNotifier, streaming markdown, repositories |
+| M2: Chat screen UI | Phase 2 | ✅ Done | Streaming bubble isolation, auto-scroll, input bar, rating card |
+| M3: All Chats + Auth + Splash + Profile + Subscription | Phases 3–4, 6 | ✅ Done | All screens scaffolded |
+| M4: Suggestion chips empty state (CRITICAL) | Phase 3 | ⚠️ Not started | 15% eval weight — do this FIRST next session |
+| M5: Chat screen polish | Phase 2 polish | 🔄 Partial | Jump-to-latest pill, send morph, haptics pending |
+| M6: Drawer + history | Phase 5 | ⬜ Not started | 10% eval weight |
+| M7: Polish + Performance | Phase 7 | ⬜ Not started | Before submission |
 
 ---
 
-## Phase 0 — Foundation
+## Phase 0 — Foundation ✅ COMPLETE
 
-**Goal:** Every subsequent screen can be built on stable infrastructure. No rework after this phase.
-
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 0.1 | Riverpod migration (remove BLoC, Freezed, GetIt) | P0 | ✅ Done | Notifier pattern in place |
-| 0.2 | Update AGENTS.md (Riverpod rules, forbidden patterns) | P0 | ✅ Done | |
-| 0.3 | Create PROJECT_PLAN.md | P0 | ✅ Done | |
-| 0.4 | Create TASK_TRACKER.md | P0 | ✅ Done | |
-| 0.5 | Add missing packages to pubspec.yaml | P0 | ✅ Done | flutter_animate, cached_network_image, flutter_svg, talker_flutter, google_fonts |
-| 0.6 | Asset directory structure (fonts/, images/, icons/) | P0 | ✅ Done | assets/images/ + assets/icons/ declared in pubspec |
-| 0.7 | Declare Inter + JetBrains Mono fonts (Android only) | P0 | ✅ Done | google_fonts used — no bundling needed, cached after first fetch |
-| 0.8 | Full AppTheme (light + dark token sets) | P0 | ✅ Done | app_colors.dart (tokens) + app_theme.dart (ThemeData) |
-| 0.9 | Platform-aware typography in ThemeData | P0 | ✅ Done | null fontFamily on iOS → SF Pro; GoogleFonts.interTextTheme on Android |
-| 0.10 | Animated theme switching (200ms cross-fade) | P1 | ✅ Done | MaterialApp uses AnimatedTheme internally at kThemeAnimationDuration=200ms |
-| 0.11 | Talker logger wired up globally | P0 | ✅ Done | loggerProvider in core_providers.dart; TalkerDioLogger on Dio |
-| 0.12 | GeminiService (raw Dio SSE + CancelToken) | P0 | ✅ Done | data/data_sources/remote/gemini/gemini_service.dart |
-| 0.13 | AppTheme provider (Riverpod, persisted to Hive) | P1 | ✅ Done | themeProvider (ThemeNotifier) → persisted to Hive settings box |
-| 0.14 | CommonButton, CommonTextField wrappers | P1 | ✅ Done | app_button.dart, app_text_field.dart; ScreenStateRenderer fixed |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 0.1 | Riverpod migration (remove BLoC, Freezed, GetIt) | ✅ Done | |
+| 0.2 | Update AGENTS.md (Riverpod rules, forbidden patterns) | ✅ Done | |
+| 0.3 | Create PROJECT_PLAN.md | ✅ Done | |
+| 0.4 | Create TASK_TRACKER.md | ✅ Done | |
+| 0.5 | Add missing packages to pubspec.yaml | ✅ Done | flutter_animate, flutter_riverpod, talker_flutter, google_fonts, etc. |
+| 0.6 | Asset directory structure | ✅ Done | assets/images/ + assets/icons/ declared |
+| 0.7 | Platform-aware typography (AppFonts) | ✅ Done | null fontFamily on iOS → SF Pro; GoogleFonts.interTextTheme on Android |
+| 0.8 | Full AppTheme (light + dark token sets) | ✅ Done | app_colors.dart + app_theme.dart |
+| 0.9 | Animated theme switching (200ms) | ✅ Done | MaterialApp AnimatedTheme |
+| 0.10 | Talker logger wired globally | ✅ Done | loggerProvider, TalkerDioLogger |
+| 0.11 | GeminiService (raw Dio SSE + CancelToken) | ✅ Done | gemini_service.dart |
+| 0.12 | ThemeNotifier (Hive-persisted) | ✅ Done | |
+| 0.13 | AppButton, AppTextField wrappers | ✅ Done | No raw ElevatedButton/TextField |
+| 0.14 | HiveService (4 boxes: conversations, chatMessages, settings) | ✅ Done | |
 
 ---
 
-## Phase 1 — Chat Domain + Core Engine
+## Phase 1 — Chat Domain + Core Engine ✅ COMPLETE
 
-**Goal:** Full end-to-end chat works in code (no UI yet). Message → stream → persist → cancel → recover.
-
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 1.1 | `Conversation` entity (id, title, createdAt, updatedAt, pinned, archived) | P0 | ⬜ Todo | |
-| 1.2 | `ChatMessage` entity (id, conversationId, role, content, status, createdAt) | P0 | ⬜ Todo | status: sending/streaming/complete/stopped/error |
-| 1.3 | Hive models for Conversation + ChatMessage | P0 | ⬜ Todo | See PD-1 in PROJECT_PLAN.md for TypeAdapter decision |
-| 1.4 | ConversationRepository interface + Hive implementation | P0 | ⬜ Todo | CRUD + grouped query (today/yesterday/7days/older) |
-| 1.5 | ChatMessageRepository interface + Hive implementation | P0 | ⬜ Todo | |
-| 1.6 | Riverpod providers for chat data layer | P0 | ⬜ Todo | |
-| 1.7 | GeminiService SSE stream method | P0 | ⬜ Todo | `Stream<String> streamResponse(prompt, {cancelToken})` |
-| 1.8 | ChatNotifier (Notifier<ChatState>) | P0 | ⬜ Todo | See CE-2 in PROJECT_PLAN.md |
-| 1.9 | ChatState (plain immutable class) | P0 | ⬜ Todo | messages, isStreaming, activeConversationId, action |
-| 1.10 | Stream cancellation (stopStream) | P0 | ⬜ Todo | CancelToken.cancel() + partial preserve + stopped badge |
-| 1.11 | Edit message + fork (editAndResend) | P1 | ⬜ Todo | Remove messages after edit point, resend |
-| 1.12 | App lifecycle stream handler | P1 | ⬜ Todo | Background → interrupted → "tap to retry" inline |
-| 1.13 | Custom streaming markdown parser | P0 | ⬜ Todo | See CE-1 in PROJECT_PLAN.md. Block-segmented. |
-| 1.14 | StreamingMarkdownView widget | P0 | ⬜ Todo | Column of keyed MarkdownBlockWidget |
-| 1.15 | Code block widget (horizontal scroll, language label) | P0 | ⬜ Todo | Part of markdown renderer |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 1.1 | `Conversation` entity | ✅ Done | id, title, createdAt, updatedAt, isPinned, isArchived, copyWith |
+| 1.2 | `ChatMessage` entity | ✅ Done | MessageRole, MessageStatus enums, copyWith |
+| 1.3 | ConversationModel + ChatMessageModel | ✅ Done | fromJson/toJson/fromEntity, millisecondsSinceEpoch |
+| 1.4 | ConversationLocalDataSource | ✅ Done | Hive, pinned-first sort |
+| 1.5 | ChatMessageLocalDataSource | ✅ Done | conversationId-keyed JSON lists, upsert |
+| 1.6 | ConversationRepositoryImpl | ✅ Done | Either<Failure,Output>, _groupByDate |
+| 1.7 | ChatMessageRepositoryImpl | ✅ Done | |
+| 1.8 | chat_data_providers.dart | ✅ Done | Riverpod wiring for all layers |
+| 1.9 | ChatState | ✅ Done | streamingContent separate from messages (perf key) |
+| 1.10 | ChatNotifier | ✅ Done | NotifierProvider.family, CancelToken, StreamSubscription, sendMessage/stop/editAndResend |
+| 1.11 | MarkdownBlock + MarkdownParser | ✅ Done | Line-by-line state machine, 7 block types |
+| 1.12 | StreamingMarkdownView | ✅ Done | _CachedBlockWidget (build() once), _ActiveBlockWidget |
+| 1.13 | CodeBlockWidget | ✅ Done | Horizontal scroll, copy button, language label |
 
 ---
 
-## Phase 2 — Chat Screen UI
+## Phase 2 — Chat Screen UI ✅ DONE (partial polish remaining)
 
-**Goal:** Chat screen is pixel-perfect, animations complete, matches Manus side-by-side.
-
-⚠️ **Do not start this phase without screenshots from the live Manus app.**
-
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 2.1 | ChatScreen scaffold (ConsumerStatefulWidget for ScrollController) | P0 | ⬜ Todo | |
-| 2.2 | User message bubble (right-aligned, spring entrance) | P0 | ⬜ Todo | Animate: spring scale + fade |
-| 2.3 | Assistant message (left-aligned, no bubble bg, spring entrance) | P0 | ⬜ Todo | |
-| 2.4 | Streaming caret pulse on active assistant bubble | P0 | ⬜ Todo | AnimatedOpacity loop |
-| 2.5 | Message list (ListView.builder, stable ValueKeys) | P0 | ⬜ Todo | Never rebuild messages above fold |
-| 2.6 | Smart auto-scroll + scroll release/re-engage | P0 | ⬜ Todo | See CE-3 in PROJECT_PLAN.md |
-| 2.7 | "Jump to latest" pill (fade in/out, never snap) | P0 | ⬜ Todo | AnimatedOpacity + jumpTo on tap |
-| 2.8 | Input bar (multiline, animated height, max 6 lines) | P0 | ⬜ Todo | Keyboard avoidance: no gap, no overlap |
-| 2.9 | Send button morph (plane → spinner → stop → plane) | P0 | ⬜ Todo | Morph not crossfade. See CONTEXT.md 4.5c |
-| 2.10 | Copy button checkmark morph (1.5s revert + haptic) | P1 | ⬜ Todo | |
-| 2.11 | Tool-call collapsible (spring expand/collapse, no scroll shift) | P1 | ⬜ Todo | See CONTEXT.md 4.4 |
-| 2.12 | Inline image rendering in messages | P2 | ⬜ Todo | cached_network_image |
-| 2.13 | Long-press text selection on streaming messages | P1 | ⬜ Todo | See CONTEXT.md 4.15 — hard problem |
-| 2.14 | Inline error bubble (API error + retry button) | P0 | ⬜ Todo | Never dialogs |
-| 2.15 | Network reconnect indicator (thin bar at top) | P1 | ⬜ Todo | connectivity_plus |
-| 2.16 | Haptics (send, copy, chip tap, empty send) | P1 | ⬜ Todo | See CONTEXT.md 4.12 |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 2.1 | ChatScreen scaffold (ConsumerStatefulWidget + ScrollController) | ✅ Done | |
+| 2.2 | User message bubble (right-aligned, fade+slide entrance) | ✅ Done | |
+| 2.3 | Assistant message (left-aligned, StaticMarkdownView) | ✅ Done | |
+| 2.4 | _StreamingBubble (only widget that rebuilds per token) | ✅ Done | chatProvider.select(streamingContent) |
+| 2.5 | _ThinkingIndicator (3-dot pulse when streamingContent is empty) | ✅ Done | flutter_animate repeat |
+| 2.6 | Smart auto-scroll (_isNearBottom getter, 40px threshold, jumpTo) | ✅ Done | |
+| 2.7 | _TaskCompletedRow (green ✓) + _RatingCard (5 interactive stars) | ✅ Done | Appear after last complete assistant msg |
+| 2.8 | ChatAppBar (title+dropdown, share, task+blue-dot, more) | ✅ Done | |
+| 2.9 | _ChatInputBar (multiline, +/tools/mic icons) | ✅ Done | |
+| 2.10 | _SendStopButton (animated circle, stop during stream) | ✅ Done | |
+| 2.11 | **"Jump to latest" pill** | ⚠️ Missing | AnimatedOpacity + jumpTo on tap — add next session |
+| 2.12 | **Send button morph (plane → stop → plane)** | ⚠️ Missing | Currently just icon swap; add AnimatedSwitcher morph |
+| 2.13 | **Haptics** (send, stop, copy, chip tap) | ⚠️ Missing | HapticFeedback.lightImpact() calls |
+| 2.14 | **Streaming caret pulse** | ⚠️ Missing | AnimatedOpacity blink after last token |
+| 2.15 | Inline error bubble (API error + retry) | ✅ Done | Shows error row below message |
+| 2.16 | Stopped message badge | ✅ Done | Shows "Stopped" row below message |
 
 ---
 
-## Phase 3 — Home / Empty State
+## Phase 3 — Home / Empty State ⚠️ HIGHEST PRIORITY NEXT
 
-⚠️ **Do not start without screenshot of Home empty state.**
+**Evaluation weight: 15% — single most-weighted animation in the entire assignment.**
 
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 3.1 | Home screen scaffold (replaces boilerplate HomeScreen) | P0 | ⬜ Todo | |
-| 3.2 | Suggestion chips (stagger animate in: 60ms, easeOutCubic, Y translate) | P0 | ⬜ Todo | Most weighted single animation |
-| 3.3 | Chip → input field hero animation | P0 | ⬜ Todo | See CE-6 in PROJECT_PLAN.md |
-| 3.4 | Model picker pill (icon morphs on mode change) | P1 | ⬜ Todo | |
-| 3.5 | Home → Chat screen transition | P1 | ⬜ Todo | Shared element or custom route transition |
+The "empty state" is the ChatScreen when it's a brand-new conversation (no messages).
+It should show animated suggestion chips. Tapping a chip → CE-6 hero animation → fills input.
 
----
-
-## Phase 4 — Auth + Onboarding + Splash
-
-⚠️ **Do not start without screenshots of splash sequence and onboarding slides.**
-
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 4.1 | Splash screen (animated logo, gradient, spring timing) | P1 | ⬜ Todo | First impression — must match Manus exactly |
-| 4.2 | Onboarding slide 1 (animated illustration) | P1 | ⬜ Todo | Illustrations animate in, not appear |
-| 4.3 | Onboarding slide 2 | P1 | ⬜ Todo | |
-| 4.4 | Onboarding slide 3 + "Get Started" CTA | P1 | ⬜ Todo | |
-| 4.5 | Swipeable page indicator (spring physics between dots) | P1 | ⬜ Todo | |
-| 4.6 | Auth screen (email field, Google button, Apple button) | P1 | ⬜ Todo | Mock flow — no real OAuth |
-| 4.7 | Error shake animation on auth failure | P1 | ⬜ Todo | Snappy, not linear |
-| 4.8 | Success transition (auth → home, animated) | P1 | ⬜ Todo | |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 3.1 | **Suggestion chips data model** | ⬜ Todo | List of ~4 suggestion strings |
+| 3.2 | **SuggestionChip widget** | ⬜ Todo | Pill with rounded border, tap → fill input |
+| 3.3 | **Stagger animate-in** (60ms offset, easeOutCubic, Y translate + fade) | ⬜ Todo | Most important animation. See PROJECT_PLAN CE-6 |
+| 3.4 | **Chip → input Hero animation** | ⬜ Todo | CE-6. Custom HeroFlightShuttleBuilder, pill → rect morph |
+| 3.5 | Empty state heading ("What can I help you with?") | ⬜ Todo | Show when messages.isEmpty |
+| 3.6 | ConversationsScreen empty state | ⬜ Todo | When conversations list is empty, show centered message + FAB hint |
 
 ---
 
-## Phase 5 — Chat Drawer + History
+## Phase 4 — Auth + Splash ✅ COMPLETE
 
-⚠️ **Do not start without screenshot of drawer open state.**
-
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 5.1 | Drawer scaffold (spring physics open/close) | P1 | ⬜ Todo | Damped, matches iOS sheet physics, on Android too |
-| 5.2 | Grouped history list from Hive (Today/Yesterday/7days/Older) | P1 | ⬜ Todo | Section headers that stick |
-| 5.3 | Search bar with 300ms debounce | P1 | ⬜ Todo | |
-| 5.4 | Swipe-to-delete with undo snackbar | P1 | ⬜ Todo | Snackbar is allowed here (ephemeral confirm) |
-| 5.5 | Long-press context menu (iOS-style scale + blur) | P1 | ⬜ Todo | Rename / Pin / Archive / Delete |
-| 5.6 | Pull-to-refresh (drawer only — disabled in chat) | P2 | ⬜ Todo | |
-| 5.7 | Infinite scroll (older conversations) | P2 | ⬜ Todo | |
-| 5.8 | Pixel-stable underlying chat (no flicker behind drawer) | P1 | ⬜ Todo | RepaintBoundary on chat content |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 4.1 | SplashScreen (centered logo, "from ∞ Meta", 2.2s → Login) | ✅ Done | flutter_animate fade+scale |
+| 4.2 | LoginScreen (Welcome + social auth buttons + colored dot grid) | ✅ Done | CustomPainter dot pattern |
+| 4.3 | EmailLoginScreen (email field, Cloudflare mock, Continue) | ✅ Done | |
+| 4.4 | Mock auth flow (any button → conversations screen) | ✅ Done | |
 
 ---
 
-## Phase 6 — Remaining Screens
+## Phase 5 — Chat Drawer + History ⬜ NOT STARTED
 
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 6.1 | Mode Picker bottom sheet (Chat/Agent/Browse/Image) | P2 | ⬜ Todo | Icon morphs between modes |
-| 6.2 | Attachment tray (animated reveal upward from input bar) | P2 | ⬜ Todo | Camera/Photo/File/Screen capture |
-| 6.3 | Attachment thumbnails (remove buttons, drag-to-reorder) | P2 | ⬜ Todo | |
-| 6.4 | Settings screen (iOS-grouped-list layout on both platforms) | P2 | ⬜ Todo | Theme toggle wired to AppTheme provider |
-| 6.5 | Paywall/Subscription screen (UI only) | P3 | ⬜ Todo | Monthly/Yearly toggle, feature comparison |
-| 6.6 | Empty state screens (no history, offline, error, rate limited) | P2 | ⬜ Todo | Custom SVG illustrations |
+**Evaluation weight: ~10%**
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 5.1 | Drawer scaffold (spring physics open/close) | ⬜ Todo | |
+| 5.2 | Grouped history list (Today/Yesterday/7days/Older) | ⬜ Todo | |
+| 5.3 | Search with 300ms debounce | ⬜ Todo | |
+| 5.4 | Swipe-to-delete + undo snackbar | ⬜ Todo | |
+| 5.5 | Long-press context menu (Rename/Pin/Archive/Delete) | ⬜ Todo | |
 
 ---
 
-## Phase 7 — Polish + Performance
+## Phase 6 — Remaining Screens 🔄 PARTIAL
 
-| # | Task | Priority | Status | Notes |
-|---|---|---|---|---|
-| 7.1 | Haptics audit (all interaction points per CONTEXT.md 4.12) | P1 | ⬜ Todo | |
-| 7.2 | Semantics labels on all interactive elements | P1 | ⬜ Todo | TalkBack / VoiceOver |
-| 7.3 | Font scale 200% layout testing | P1 | ⬜ Todo | Must not break any layout |
-| 7.4 | Tap target audit (min 48×48dp) | P1 | ⬜ Todo | |
-| 7.5 | WCAG AA color contrast check (both themes) | P1 | ⬜ Todo | |
-| 7.6 | 200-message conversation performance profiling | P0 | ⬜ Todo | Target: 60fps, zero dropped frames |
-| 7.7 | Memory profiling | P0 | ⬜ Todo | Target: <250MB RSS with 5 images |
-| 7.8 | Cold start timing | P1 | ⬜ Todo | <2.5s Pixel 6 / <2.0s iPhone 13 |
-| 7.9 | Release APK size check | P1 | ⬜ Todo | `flutter build apk --release` — target <35MB |
-| 7.10 | `flutter analyze` zero warnings | P0 | ⬜ Todo | Must pass before submission |
-| 7.11 | `dart format --set-exit-if-changed lib/ test/` | P0 | ⬜ Todo | |
-| 7.12 | Demo video recording (5–7 min per spec) | P0 | ⬜ Todo | See CONTEXT.md section 9 for required scenes |
-| 7.13 | Side-by-side recording with real Manus app (≥30 sec) | P0 | ⬜ Todo | Key submission deliverable |
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 6.1 | ProfileScreen | ✅ Done | Orange avatar, Free plan, 6 settings rows, Upgrade → Subscription |
+| 6.2 | SubscriptionScreen | ✅ Done | Monthly/Annually radio, feature card, Upgrade now CTA |
+| 6.3 | ConversationsScreen (All Chats) | ✅ Done | Filter tabs, Agent promo tile, FAB, long-press delete |
+| 6.4 | Mode Picker bottom sheet | ⬜ Todo | Low priority |
+| 6.5 | Attachment tray | ⬜ Todo | Low priority |
+
+---
+
+## Phase 7 — Polish + Performance ⬜ NOT STARTED
+
+| # | Task | Status | Notes |
+|---|---|---|---|
+| 7.1 | Haptics audit | ⬜ Todo | All interaction points |
+| 7.2 | Semantics labels | ⬜ Todo | TalkBack / VoiceOver |
+| 7.3 | 200-message performance profiling | ⬜ Todo | 60fps target |
+| 7.4 | Memory profiling | ⬜ Todo | <250MB RSS |
+| 7.5 | Release APK build + size | ⬜ Todo | <35MB |
+| 7.6 | `flutter analyze` zero warnings | ✅ Current | Passing |
+| 7.7 | `dart format` | ⬜ Todo | Before submission |
+| 7.8 | Demo video recording | ⬜ Todo | 5–7 min per spec |
+| 7.9 | Side-by-side recording with real Manus app | ⬜ Todo | Key submission deliverable |
 
 ---
 
@@ -205,24 +192,12 @@ NEXT ACTION : Start Phase 1 — Chat domain entities + Hive models + GeminiServi
 
 | Date | Task | Notes |
 |---|---|---|
-| 2026-05-15 | BLoC → Riverpod migration | Removed flutter_bloc, freezed, freezed_annotation, get_it, build_runner. Added flutter_riverpod ^2.6.1. Converted ProductCubit → ProductNotifier. |
-| 2026-05-15 | AGENTS.md updated | Riverpod-only rules, forbidden patterns, provider organization convention. |
-| 2026-05-15 | ScreenState<T> rewritten | Removed @freezed. Plain immutable class with manual copyWith. |
-| 2026-05-15 | Providers structure created | core/providers/core_providers.dart + data/providers/product_data_providers.dart |
-| 2026-05-15 | PROJECT_PLAN.md created | Full engineering plan, CE decisions, tradeoffs, roadmap. |
-| 2026-05-15 | TASK_TRACKER.md created | This file. |
-| 2026-05-15 | Phase 0 complete | Packages, theme system (light/dark), platform typography, Hive settings box, ThemeNotifier, Talker logger, GeminiService (raw Dio SSE), AppButton/AppTextField wrappers. flutter analyze: 0 issues. |
-
----
-
-## Blocked Items
-
-*None currently.*
-
-Template for blocked items:
-```
-| BLOCK-N | Description | Blocked by | Resolution needed |
-```
+| 2026-05-15 | Phase 0 complete | Riverpod migration, AppTheme, Talker, GeminiService (Dio SSE), Hive, platform typography. flutter analyze: 0 issues. |
+| 2026-05-15 | Phase 1 complete | All domain entities, Hive models, repositories, ChatNotifier (family, CancelToken, StreamSubscription), streaming markdown engine (block-segmented, _CachedBlockWidget, CodeBlockWidget). 0 issues. |
+| 2026-05-15 | Phase 2 complete | ChatScreen (ConsumerStatefulWidget, ScrollController), _StreamingBubble isolation, smart auto-scroll (jumpTo, 40px threshold), _ThinkingIndicator, _TaskCompletedRow, _RatingCard, ChatAppBar, _ChatInputBar, _SendStopButton. 0 issues. |
+| 2026-05-15 | Phase 4 complete | SplashScreen (2.2s, logo, "from Meta"), LoginScreen (dot-grid, social buttons), EmailLoginScreen (email field, CAPTCHA mock). |
+| 2026-05-15 | Phase 6 partial | ConversationsScreen (filter tabs, Agent promo, FAB flow, relative time formatter), ConversationsNotifier (create/delete/pin/search/filter), ProfileScreen (orange avatar, Free/Upgrade, settings rows), SubscriptionScreen (Monthly/Annually radio, features card, animated CTA). |
+| 2026-05-15 | Router wired | All 7 routes: splash → login → email-login → chats → chat/:id → profile → subscription |
 
 ---
 
@@ -236,22 +211,22 @@ Template for blocked items:
 | AD-2 | DI | Riverpod Providers | GetIt |
 | AD-3 | Code generation | None (plain immutable classes) | freezed, riverpod_generator |
 | AD-4 | Gemini integration | Raw Dio + SSE parsing | google_generative_ai SDK |
-| AD-5 | Streaming markdown | Custom block-segmented renderer | flutter_markdown |
-| AD-6 | Auto-scroll | ScrollController + jumpTo | animateTo, reverse ListView |
-| AD-7 | Chat state model | Notifier + explicit StreamSubscription | StreamProvider, AsyncNotifier |
-| AD-8 | Typography | Platform split in ThemeData (null=SF Pro on iOS) | Inter everywhere |
-| AD-9 | Chip animation | Hero with custom flight path | AnimatedPositioned |
-| AD-10 | Local persistence | Hive | Isar |
+| AD-5 | Streaming markdown | Custom block-segmented renderer | flutter_markdown full-text |
+| AD-6 | Auto-scroll | ScrollController + jumpTo + addPostFrameCallback | animateTo |
+| AD-7 | Chat state model | Notifier<ChatState>.family + StreamSubscription | StreamProvider, AsyncNotifier |
+| AD-8 | Typography | Platform split: null fontFamily on iOS = SF Pro | Inter everywhere |
+| AD-9 | Chip animation | Hero with custom HeroFlightShuttleBuilder | AnimatedPositioned |
+| AD-10 | Local persistence | Hive (JSON map, no TypeAdapters — avoids build_runner) | Isar, TypeAdapters |
+| AD-11 | streamingContent | Separate field outside messages list | Token-appended to message |
+| AD-12 | Streaming placeholder | status==streaming message in list; _StreamingBubble renders it | Append-only list |
 
 ---
 
 ## Pending Decisions
 
-| ID | Decision | Options | Blocking |
+| ID | Decision | Options | Status |
 |---|---|---|---|
-| PD-1 | Hive storage format for chat messages | TypeAdapters vs JSON Map | Phase 1 |
-| PD-2 | Animation library for splash/logo | flutter_animate vs Rive | Phase 4 |
-| PD-3 | Markdown parser: line-by-line vs token buffer | Both valid | Phase 1 |
+| PD-2 | Animation library for chip morph | flutter_animate Hero (chosen plan) vs Rive | Resolved → flutter_animate + Hero (CE-6) |
 
 ---
 
@@ -283,8 +258,9 @@ Template for blocked items:
 □ Add any new architecture decisions to "Architecture Decision Log"
 □ Run `flutter analyze` — must pass zero warnings
 □ Run `dart format lib/` to keep code formatted
+□ Commit + push
 ```
 
 ---
 
-*Last updated: 2026-05-15 | Phase 0 in progress*
+*Last updated: 2026-05-15 | Phases 0–2 + partial 4 & 6 complete. Next: Phase 3 suggestion chips (15% eval weight).*
