@@ -1,10 +1,16 @@
 class AppRoutes {
   AppRoutes._();
 
-  static const splashScreen = '/splash-screen';
+  static const splash = '/';
+  static const login = '/login';
+  static const emailLogin = '/email-login';
+  static const conversations = '/chats';
+  static const profile = '/profile';
+  static const subscription = '/subscription';
 
-  static const loginScreen = '/login-screen';
+  static const _chatBase = '/chat';
+  static String chat(String id) => '$_chatBase/$id';
 
-  static const homeScreen = '/home-screen';
-
+  // For GoRouter path pattern
+  static const chatPattern = '/chat/:id';
 }
