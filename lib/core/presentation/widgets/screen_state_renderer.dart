@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:manus/core/component/app_button.dart';
 import 'package:manus/core/presentation/state/screen_state.dart';
 
 class ScreenStateRenderer<T> extends StatelessWidget {
@@ -41,7 +42,7 @@ class ScreenStateRenderer<T> extends StatelessWidget {
             ),
             if (onRetry != null) ...[
               SizedBox(height: 16.h),
-              ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+              AppButton(label: 'Retry', onTap: onRetry),
             ],
           ],
         ),

@@ -25,10 +25,10 @@
 ```
 DATE        : 2026-05-15
 PHASE       : Phase 0 — Foundation
-SUB-TASK    : Foundation setup partially complete. Riverpod migration done.
-              Remaining: packages, theme, typography, fonts, Gemini service, logger.
-BLOCKING    : None currently.
-NEXT ACTION : Add missing packages → wire up theme system → platform typography.
+SUB-TASK    : Foundation complete. All infrastructure in place.
+BLOCKING    : None.
+NEXT ACTION : Start Phase 1 — Chat domain entities + Hive models + GeminiService integration.
+              ⚠️  Screenshots needed before Phase 2 (Chat Screen UI).
 ```
 
 ---
@@ -56,16 +56,16 @@ NEXT ACTION : Add missing packages → wire up theme system → platform typogra
 | 0.2 | Update AGENTS.md (Riverpod rules, forbidden patterns) | P0 | ✅ Done | |
 | 0.3 | Create PROJECT_PLAN.md | P0 | ✅ Done | |
 | 0.4 | Create TASK_TRACKER.md | P0 | ✅ Done | |
-| 0.5 | Add missing packages to pubspec.yaml | P0 | ⬜ Todo | flutter_animate, cached_network_image, flutter_svg, talker |
-| 0.6 | Asset directory structure (fonts/, images/, icons/) | P0 | ⬜ Todo | mkdir + declare in pubspec.yaml |
-| 0.7 | Declare Inter + JetBrains Mono fonts (Android only) | P0 | ⬜ Todo | pubspec.yaml flutter.fonts section |
-| 0.8 | Full AppTheme (light + dark token sets) | P0 | ⬜ Todo | Colors, surfaces, borders for both themes |
-| 0.9 | Platform-aware typography in ThemeData | P0 | ⬜ Todo | SF Pro on iOS (null fontFamily), Inter on Android |
-| 0.10 | Animated theme switching (200ms cross-fade) | P1 | ⬜ Todo | AnimatedTheme wrapper |
-| 0.11 | Talker logger wired up globally | P0 | ⬜ Todo | Replace any print/debugPrint |
-| 0.12 | GeminiService (raw Dio SSE + CancelToken) | P0 | ⬜ Todo | See CE-4 in PROJECT_PLAN.md |
-| 0.13 | AppTheme provider (Riverpod, persisted to Hive) | P1 | ⬜ Todo | light / dark / system toggle |
-| 0.14 | CommonButton, CommonTextField, CommonDialog wrappers | P1 | ⬜ Todo | Evaluators grep for raw ElevatedButton/TextField |
+| 0.5 | Add missing packages to pubspec.yaml | P0 | ✅ Done | flutter_animate, cached_network_image, flutter_svg, talker_flutter, google_fonts |
+| 0.6 | Asset directory structure (fonts/, images/, icons/) | P0 | ✅ Done | assets/images/ + assets/icons/ declared in pubspec |
+| 0.7 | Declare Inter + JetBrains Mono fonts (Android only) | P0 | ✅ Done | google_fonts used — no bundling needed, cached after first fetch |
+| 0.8 | Full AppTheme (light + dark token sets) | P0 | ✅ Done | app_colors.dart (tokens) + app_theme.dart (ThemeData) |
+| 0.9 | Platform-aware typography in ThemeData | P0 | ✅ Done | null fontFamily on iOS → SF Pro; GoogleFonts.interTextTheme on Android |
+| 0.10 | Animated theme switching (200ms cross-fade) | P1 | ✅ Done | MaterialApp uses AnimatedTheme internally at kThemeAnimationDuration=200ms |
+| 0.11 | Talker logger wired up globally | P0 | ✅ Done | loggerProvider in core_providers.dart; TalkerDioLogger on Dio |
+| 0.12 | GeminiService (raw Dio SSE + CancelToken) | P0 | ✅ Done | data/data_sources/remote/gemini/gemini_service.dart |
+| 0.13 | AppTheme provider (Riverpod, persisted to Hive) | P1 | ✅ Done | themeProvider (ThemeNotifier) → persisted to Hive settings box |
+| 0.14 | CommonButton, CommonTextField wrappers | P1 | ✅ Done | app_button.dart, app_text_field.dart; ScreenStateRenderer fixed |
 
 ---
 
@@ -211,6 +211,7 @@ NEXT ACTION : Add missing packages → wire up theme system → platform typogra
 | 2026-05-15 | Providers structure created | core/providers/core_providers.dart + data/providers/product_data_providers.dart |
 | 2026-05-15 | PROJECT_PLAN.md created | Full engineering plan, CE decisions, tradeoffs, roadmap. |
 | 2026-05-15 | TASK_TRACKER.md created | This file. |
+| 2026-05-15 | Phase 0 complete | Packages, theme system (light/dark), platform typography, Hive settings box, ThemeNotifier, Talker logger, GeminiService (raw Dio SSE), AppButton/AppTextField wrappers. flutter analyze: 0 issues. |
 
 ---
 

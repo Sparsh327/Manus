@@ -8,11 +8,15 @@ class HiveService {
 
   HiveService(this.box);
 
+  static const String settingsBox = 'settings';
+
   static Future<void> init() async {
     final appDocumentDir = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDir.path);
-    // Open Boxes
-    await Hive.openBox(cachedProducts);
+    await Future.wait([
+      Hive.openBox(cachedProducts),
+      Hive.openBox(settingsBox),
+    ]);
   }
 
   Future<void> save(String key, dynamic value) async {
