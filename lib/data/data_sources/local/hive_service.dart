@@ -9,6 +9,8 @@ class HiveService {
   HiveService(this.box);
 
   static const String settingsBox = 'settings';
+  static const String conversationsBox = 'conversations';
+  static const String chatMessagesBox = 'chat_messages';
 
   static Future<void> init() async {
     final appDocumentDir = await getApplicationDocumentsDirectory();
@@ -16,6 +18,8 @@ class HiveService {
     await Future.wait([
       Hive.openBox(cachedProducts),
       Hive.openBox(settingsBox),
+      Hive.openBox(conversationsBox),
+      Hive.openBox(chatMessagesBox),
     ]);
   }
 
