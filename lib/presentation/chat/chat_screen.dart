@@ -31,6 +31,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _inputBarKey = GlobalKey();
   bool _hasText = false;
   bool _showJumpPill = false;
+  bool _pendingScrollJump = false;
 
   bool get _isNearBottom {
     if (!_scrollController.hasClients) return true;
@@ -60,7 +61,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _jumpToBottom() {
+    if (_pendingScrollJump) return;
+    _pendingScrollJump = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _pendingScrollJump = false;
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
@@ -244,8 +248,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (i < messages.length) {
           final msg = messages[i];
           if (msg.status == MessageStatus.streaming) {
-            return RepaintBoundary(
-              child: _StreamingBubble(conversationId: widget.conversationId),
+            return _StreamingBubbleEntry(
+              conversationId: widget.conversationId,
             );
           }
           return _MessageItem(
@@ -544,6 +548,61 @@ class _AssistantMessage extends StatelessWidget {
   }
 }
 
+// ── Streaming bubble entry — plays entrance animation exactly once ───
+// Separating entrance animation into a StatefulWidget is critical:
+// flutter_animate's _AnimateWidget compares effects lists by reference,
+// so .animate() called in a ConsumerWidget.build() restarts the animation
+// on every token rebuild, causing visible flicker.
+
+class _StreamingBubbleEntry extends StatefulWidget {
+  final String conversationId;
+  const _StreamingBubbleEntry({required this.conversationId});
+
+  @override
+  State<_StreamingBubbleEntry> createState() => _StreamingBubbleEntryState();
+}
+
+class _StreamingBubbleEntryState extends State<_StreamingBubbleEntry>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 220),
+    );
+    _opacity = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(
+        position: _slide,
+        child: RepaintBoundary(
+          child: _StreamingBubble(conversationId: widget.conversationId),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Streaming bubble — only this widget rebuilds per token ───
 
 class _StreamingBubble extends ConsumerWidget {
@@ -574,12 +633,7 @@ class _StreamingBubble extends ConsumerWidget {
                 cs: cs,
               ),
       ),
-    ).animate().fadeIn(duration: 220.ms).slideY(
-          begin: 0.06,
-          end: 0,
-          duration: 220.ms,
-          curve: Curves.easeOut,
-        );
+    );
   }
 }
 

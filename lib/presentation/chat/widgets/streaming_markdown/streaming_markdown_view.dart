@@ -59,7 +59,9 @@ class _StreamingMarkdownViewState extends State<StreamingMarkdownView> {
       // Append new completed blocks to cache — never touch existing ones.
       final completed = _parser.completedBlocks;
       for (var i = _lastCompletedCount; i < completed.length; i++) {
-        _cachedWidgets.add(_CachedBlockWidget(key: ValueKey(i), block: completed[i]));
+        _cachedWidgets.add(
+          _CachedBlockWidget(key: ValueKey(i), block: completed[i]),
+        );
       }
       _lastCompletedCount = completed.length;
     }
