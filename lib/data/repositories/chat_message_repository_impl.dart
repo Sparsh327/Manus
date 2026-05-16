@@ -56,9 +56,7 @@ class ChatMessageRepositoryImpl implements ChatMessageRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteAllMessages(
-    String conversationId,
-  ) async {
+  Future<Either<Failure, void>> deleteAllMessages(String conversationId) async {
     try {
       _local.deleteAllMessages(conversationId);
       return const Right(null);

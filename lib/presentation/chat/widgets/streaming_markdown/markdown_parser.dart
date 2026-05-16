@@ -7,10 +7,7 @@ class MarkdownParser {
   final List<MarkdownBlock> completedBlocks;
   final MarkdownBlock? activeBlock;
 
-  const MarkdownParser({
-    this.completedBlocks = const [],
-    this.activeBlock,
-  });
+  const MarkdownParser({this.completedBlocks = const [], this.activeBlock});
 
   factory MarkdownParser.initial() => const MarkdownParser();
 
@@ -31,18 +28,23 @@ class MarkdownParser {
         if (line.trimRight() == '```') {
           // Close the code block.
           final code = active == null ? '' : active.content;
-          completed.add(MarkdownBlock(
-            type: BlockType.codeBlock,
-            content: code,
-            language: codeLang,
-          ));
+          completed.add(
+            MarkdownBlock(
+              type: BlockType.codeBlock,
+              content: code,
+              language: codeLang,
+            ),
+          );
           active = null;
           inCodeBlock = false;
           codeLang = null;
         } else {
           active = active == null
               ? MarkdownBlock(
-                  type: BlockType.codeBlock, content: line, language: codeLang)
+                  type: BlockType.codeBlock,
+                  content: line,
+                  language: codeLang,
+                )
               : active.appendLine(line);
         }
         continue;
@@ -92,10 +94,7 @@ class MarkdownParser {
       }
     }
 
-    return MarkdownParser(
-      completedBlocks: completed,
-      activeBlock: active,
-    );
+    return MarkdownParser(completedBlocks: completed, activeBlock: active);
   }
 
   static bool _isBlockTerminated(List<String> lines, int i) {

@@ -25,10 +25,13 @@ class LoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.waving_hand_rounded,
-                        size: 64.r,
-                        color: Colors.white,
-                      ).animate().fadeIn(duration: 500.ms).scaleXY(
+                            Icons.waving_hand_rounded,
+                            size: 64.r,
+                            color: Colors.white,
+                          )
+                          .animate()
+                          .fadeIn(duration: 500.ms)
+                          .scaleXY(
                             begin: 0.85,
                             end: 1.0,
                             duration: 500.ms,
@@ -67,9 +70,10 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(height: 16.h),
                       _AuthButton(
                         onTap: () => context.go(AppRoutes.conversations),
-                        leading: _SocialIcon(
-                          icon: Icons.g_mobiledata_rounded,
-                          color: const Color(0xFFEA4335),
+                        leading: Image.asset(
+                          'assets/logo/google-logo.png',
+                          width: 26.r,
+                          height: 26.r,
                         ),
                         label: 'Continue with Google',
                       ),
@@ -85,8 +89,10 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(height: 10.h),
                       _AuthButton(
                         onTap: () => context.go(AppRoutes.conversations),
-                        leading: _SocialIcon(
-                          icon: Icons.apple,
+                        leading: Image.asset(
+                          'assets/logo/apple-logo.png',
+                          width: 26.r,
+                          height: 26.r,
                           color: Colors.white,
                         ),
                         label: 'Continue with Apple',
@@ -258,7 +264,10 @@ class _OrDivider extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Divider(color: Colors.white.withValues(alpha: 0.12), height: 1),
+          child: Divider(
+            color: Colors.white.withValues(alpha: 0.12),
+            height: 1,
+          ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -272,7 +281,10 @@ class _OrDivider extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Divider(color: Colors.white.withValues(alpha: 0.12), height: 1),
+          child: Divider(
+            color: Colors.white.withValues(alpha: 0.12),
+            height: 1,
+          ),
         ),
       ],
     );
@@ -286,10 +298,7 @@ class _DotPatternBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _DotPainter(),
-      size: Size.infinite,
-    );
+    return CustomPaint(painter: _DotPainter(), size: Size.infinite);
   }
 }
 

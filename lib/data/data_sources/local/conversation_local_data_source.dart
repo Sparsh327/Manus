@@ -13,16 +13,17 @@ class ConversationLocalDataSourceImpl implements ConversationLocalDataSource {
   final Box _box;
 
   ConversationLocalDataSourceImpl()
-      : _box = Hive.box(HiveService.conversationsBox);
+    : _box = Hive.box(HiveService.conversationsBox);
 
   @override
   List<ConversationModel> getAll() {
     try {
       final raw = _box.values.toList();
       return raw
-          .map((e) => ConversationModel.fromJson(
-                Map<String, dynamic>.from(e as Map),
-              ))
+          .map(
+            (e) =>
+                ConversationModel.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
           .toList()
         ..sort((a, b) {
           // Pinned first, then by updatedAt descending

@@ -19,8 +19,9 @@ class ProductNotifier extends Notifier<ProductState> {
     state = state.copyWith(screenState: ScreenState.loading());
     final result = await ref.read(productRepositoryProvider).getProducts();
     result.fold(
-      (failure) =>
-          state = state.copyWith(screenState: ScreenState.error(failure.message)),
+      (failure) => state = state.copyWith(
+        screenState: ScreenState.error(failure.message),
+      ),
       (products) =>
           state = state.copyWith(screenState: ScreenState.loaded(products)),
     );

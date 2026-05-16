@@ -208,11 +208,7 @@ class _FeatureRow extends StatelessWidget {
       children: [
         Icon(icon, size: 20.r, color: cs.onSurface),
         SizedBox(width: 14.w),
-        Expanded(
-          child: Text.rich(
-            _boldFirst(label, cs),
-          ),
-        ),
+        Expanded(child: Text.rich(_boldFirst(label, cs))),
       ],
     );
   }
@@ -222,13 +218,15 @@ class _FeatureRow extends StatelessWidget {
     if (match != null) {
       return TextSpan(
         text: match.group(1),
-        style: AppTextStyles.body(color: cs.onSurface)
-            .copyWith(fontWeight: FontWeight.w700),
+        style: AppTextStyles.body(
+          color: cs.onSurface,
+        ).copyWith(fontWeight: FontWeight.w700),
         children: [
           TextSpan(
             text: match.group(2),
-            style: AppTextStyles.body(color: cs.onSurface)
-                .copyWith(fontWeight: FontWeight.w400),
+            style: AppTextStyles.body(
+              color: cs.onSurface,
+            ).copyWith(fontWeight: FontWeight.w400),
           ),
         ],
       );
@@ -304,8 +302,7 @@ class _PlanOption extends StatelessWidget {
             if (badge != null) ...[
               SizedBox(width: 10.w),
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: AppColors.accent,
                   borderRadius: BorderRadius.circular(20.r),

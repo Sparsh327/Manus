@@ -27,13 +27,16 @@ class AppTheme {
 
     final bg = isDark ? AppColors.darkBg : AppColors.lightBg;
     final surface = isDark ? AppColors.darkSurface : AppColors.lightSurface;
-    final surfaceElevated =
-        isDark ? AppColors.darkSurfaceElevated : AppColors.lightSurfaceElevated;
+    final surfaceElevated = isDark
+        ? AppColors.darkSurfaceElevated
+        : AppColors.lightSurfaceElevated;
     final border = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final textPrimary =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final textSecondary =
-        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final textPrimary = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
 
     final colorScheme = ColorScheme(
       brightness: brightness,
@@ -57,24 +60,27 @@ class AppTheme {
       onSurface: textPrimary,
       onSurfaceVariant: textSecondary,
       outline: border,
-      outlineVariant: isDark ? AppColors.darkBorderSubtle : AppColors.lightBorderSubtle,
+      outlineVariant: isDark
+          ? AppColors.darkBorderSubtle
+          : AppColors.lightBorderSubtle,
       shadow: Colors.black,
       scrim: AppColors.overlay,
       inverseSurface: isDark ? AppColors.lightSurface : AppColors.darkSurface,
-      onInverseSurface:
-          isDark ? AppColors.lightTextPrimary : AppColors.darkTextPrimary,
+      onInverseSurface: isDark
+          ? AppColors.lightTextPrimary
+          : AppColors.darkTextPrimary,
       inversePrimary: AppColors.accent,
     );
 
     final baseTextTheme = isDark
         ? ThemeData.dark().textTheme.apply(
-              bodyColor: textPrimary,
-              displayColor: textPrimary,
-            )
+            bodyColor: textPrimary,
+            displayColor: textPrimary,
+          )
         : ThemeData.light().textTheme.apply(
-              bodyColor: textPrimary,
-              displayColor: textPrimary,
-            );
+            bodyColor: textPrimary,
+            displayColor: textPrimary,
+          );
 
     return ThemeData(
       useMaterial3: true,
@@ -98,8 +104,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         hintStyle: TextStyle(color: textSecondary, fontSize: 15),
       ),
       // Divider

@@ -32,10 +32,7 @@ class ChatMessage extends Equatable {
   bool get isStopped => status == MessageStatus.stopped;
   bool get isError => status == MessageStatus.error;
 
-  ChatMessage copyWith({
-    String? content,
-    MessageStatus? status,
-  }) {
+  ChatMessage copyWith({String? content, MessageStatus? status}) {
     return ChatMessage(
       id: id,
       conversationId: conversationId,
@@ -47,6 +44,12 @@ class ChatMessage extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, conversationId, role, content, status, createdAt];
+  List<Object?> get props => [
+    id,
+    conversationId,
+    role,
+    content,
+    status,
+    createdAt,
+  ];
 }

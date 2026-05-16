@@ -15,7 +15,8 @@ abstract class ConversationRepository {
 
   // Returns conversations grouped for the drawer:
   // {"Today": [...], "Yesterday": [...], "Previous 7 Days": [...], "Older": [...]}
-  Future<Either<Failure, Map<String, List<Conversation>>>> getGroupedConversations();
+  Future<Either<Failure, Map<String, List<Conversation>>>>
+  getGroupedConversations();
 
   Future<Either<Failure, void>> searchConversations(String query);
 }

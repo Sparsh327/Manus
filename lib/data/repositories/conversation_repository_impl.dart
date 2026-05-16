@@ -63,7 +63,7 @@ class ConversationRepositoryImpl implements ConversationRepository {
 
   @override
   Future<Either<Failure, Map<String, List<Conversation>>>>
-      getGroupedConversations() async {
+  getGroupedConversations() async {
     try {
       final all = _local.getAll().where((c) => !c.isArchived).toList();
       return Right(_groupByDate(all));

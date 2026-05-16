@@ -23,9 +23,10 @@ class StaticMarkdownView extends StatelessWidget {
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: allBlocks
-          .map((b) => _CachedBlockWidget(block: b))
-          .toList(growable: false),
+      children: [
+        for (var i = 0; i < allBlocks.length; i++)
+          _CachedBlockWidget(key: ValueKey(i), block: allBlocks[i]),
+      ],
     );
   }
 }
@@ -58,7 +59,7 @@ class _StreamingMarkdownViewState extends State<StreamingMarkdownView> {
       // Append new completed blocks to cache — never touch existing ones.
       final completed = _parser.completedBlocks;
       for (var i = _lastCompletedCount; i < completed.length; i++) {
-        _cachedWidgets.add(_CachedBlockWidget(block: completed[i]));
+        _cachedWidgets.add(_CachedBlockWidget(key: ValueKey(i), block: completed[i]));
       }
       _lastCompletedCount = completed.length;
     }
@@ -82,7 +83,7 @@ class _StreamingMarkdownViewState extends State<StreamingMarkdownView> {
 class _CachedBlockWidget extends StatefulWidget {
   final MarkdownBlock block;
 
-  const _CachedBlockWidget({required this.block});
+  const _CachedBlockWidget({super.key, required this.block});
 
   @override
   State<_CachedBlockWidget> createState() => _CachedBlockWidgetState();
@@ -104,13 +105,29 @@ class _CachedBlockWidgetState extends State<_CachedBlockWidget> {
 }
 
 /// Renders the live in-progress block (rebuilt on every token).
+/// Uses plain SelectableText for prose — avoids MarkdownBody parse overhead
+/// on every token. Markdown formatting renders once the block is finalized
+/// and promoted to a _CachedBlockWidget.
 class _ActiveBlockWidget extends StatelessWidget {
   final MarkdownBlock block;
 
   const _ActiveBlockWidget({required this.block});
 
   @override
-  Widget build(BuildContext context) => _renderBlock(block);
+  Widget build(BuildContext context) {
+    if (block.type == BlockType.codeBlock) {
+      return CodeBlockWidget(code: block.content, language: block.language);
+    }
+    return Padding(
+      padding: EdgeInsets.only(bottom: 4.h),
+      child: SelectableText(
+        block.content,
+        style: AppTextStyles.body(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
+    );
+  }
 }
 
 Widget _renderBlock(MarkdownBlock block) {
@@ -145,10 +162,7 @@ class _MarkdownBodyBlock extends StatelessWidget {
         ),
         blockquoteDecoration: BoxDecoration(
           border: Border(
-            left: BorderSide(
-              color: theme.colorScheme.primary,
-              width: 3,
-            ),
+            left: BorderSide(color: theme.colorScheme.primary, width: 3),
           ),
         ),
       ),

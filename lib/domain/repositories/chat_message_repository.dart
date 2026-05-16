@@ -3,9 +3,7 @@ import 'package:manus/core/error/failure.dart';
 import 'package:manus/domain/entities/chat_message.dart';
 
 abstract class ChatMessageRepository {
-  Future<Either<Failure, List<ChatMessage>>> getMessages(
-    String conversationId,
-  );
+  Future<Either<Failure, List<ChatMessage>>> getMessages(String conversationId);
 
   Future<Either<Failure, void>> saveMessage(ChatMessage message);
 

@@ -31,7 +31,8 @@ class AppFonts {
   }) {
     if (_isIOS) {
       return TextStyle(
-        fontFamily: 'Courier', // SF Mono fallback (true SF Mono needs entitlement)
+        fontFamily:
+            'Courier', // SF Mono fallback (true SF Mono needs entitlement)
         fontSize: fontSize,
         fontWeight: fontWeight,
         color: color,

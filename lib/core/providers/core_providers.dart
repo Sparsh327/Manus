@@ -12,10 +12,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 //      ref.read(loggerProvider).error('msg', error, stackTrace)
 final loggerProvider = Provider<Talker>((ref) {
   return TalkerFlutter.init(
-    settings: TalkerSettings(
-      enabled: true,
-      useConsoleLogs: true,
-    ),
+    settings: TalkerSettings(enabled: true, useConsoleLogs: true),
   );
 });
 

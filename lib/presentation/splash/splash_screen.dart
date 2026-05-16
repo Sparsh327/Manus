@@ -32,11 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Stack(
           children: [
             Center(
-              child: Icon(
-                Icons.waving_hand_rounded,
-                size: 72.r,
-                color: fg,
-              )
+              child: Icon(Icons.waving_hand_rounded, size: 72.r, color: fg)
                   .animate()
                   .fadeIn(duration: 600.ms, curve: Curves.easeOut)
                   .scaleXY(

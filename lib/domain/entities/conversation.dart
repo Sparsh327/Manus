@@ -7,6 +7,7 @@ class Conversation extends Equatable {
   final DateTime updatedAt;
   final bool isPinned;
   final bool isArchived;
+  final String? lastMessagePreview;
 
   const Conversation({
     required this.id,
@@ -15,6 +16,7 @@ class Conversation extends Equatable {
     required this.updatedAt,
     this.isPinned = false,
     this.isArchived = false,
+    this.lastMessagePreview,
   });
 
   Conversation copyWith({
@@ -22,6 +24,7 @@ class Conversation extends Equatable {
     DateTime? updatedAt,
     bool? isPinned,
     bool? isArchived,
+    String? lastMessagePreview,
   }) {
     return Conversation(
       id: id,
@@ -30,10 +33,18 @@ class Conversation extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
       isPinned: isPinned ?? this.isPinned,
       isArchived: isArchived ?? this.isArchived,
+      lastMessagePreview: lastMessagePreview ?? this.lastMessagePreview,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, title, createdAt, updatedAt, isPinned, isArchived];
+  List<Object?> get props => [
+    id,
+    title,
+    createdAt,
+    updatedAt,
+    isPinned,
+    isArchived,
+    lastMessagePreview,
+  ];
 }

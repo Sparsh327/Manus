@@ -4,8 +4,8 @@ import 'package:manus/presentation/conversations/notifier/conversations_state.da
 
 final conversationsProvider =
     NotifierProvider<ConversationsNotifier, ConversationsState>(
-  ConversationsNotifier.new,
-);
+      ConversationsNotifier.new,
+    );
 
 class ConversationsNotifier extends Notifier<ConversationsState> {
   @override
@@ -20,10 +20,8 @@ class ConversationsNotifier extends Notifier<ConversationsState> {
         .read(conversationRepositoryProvider)
         .getAllConversations();
     result.fold(
-      (failure) => state = state.copyWith(
-        isLoading: false,
-        error: failure.message,
-      ),
+      (failure) =>
+          state = state.copyWith(isLoading: false, error: failure.message),
       (conversations) => state = state.copyWith(
         isLoading: false,
         conversations: conversations,
@@ -45,15 +43,10 @@ class ConversationsNotifier extends Notifier<ConversationsState> {
     final result = await ref
         .read(conversationRepositoryProvider)
         .createConversation(title: 'New conversation');
-    return result.fold(
-      (_) => null,
-      (conv) {
-        state = state.copyWith(
-          conversations: [conv, ...state.conversations],
-        );
-        return conv.id;
-      },
-    );
+    return result.fold((_) => null, (conv) {
+      state = state.copyWith(conversations: [conv, ...state.conversations]);
+      return conv.id;
+    });
   }
 
   Future<void> deleteConversation(String id) async {
@@ -66,9 +59,18 @@ class ConversationsNotifier extends Notifier<ConversationsState> {
   Future<void> pinConversation(String id, {required bool pinned}) async {
     final conv = state.conversations.firstWhere((c) => c.id == id);
     final updated = conv.copyWith(isPinned: pinned, updatedAt: DateTime.now());
-    await ref
-        .read(conversationRepositoryProvider)
-        .updateConversation(updated);
+    await ref.read(conversationRepositoryProvider).updateConversation(updated);
+    state = state.copyWith(
+      conversations: state.conversations
+          .map((c) => c.id == id ? updated : c)
+          .toList(),
+    );
+  }
+
+  Future<void> renameConversation(String id, String newTitle) async {
+    final conv = state.conversations.firstWhere((c) => c.id == id);
+    final updated = conv.copyWith(title: newTitle, updatedAt: DateTime.now());
+    await ref.read(conversationRepositoryProvider).updateConversation(updated);
     state = state.copyWith(
       conversations: state.conversations
           .map((c) => c.id == id ? updated : c)

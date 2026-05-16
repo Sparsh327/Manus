@@ -201,7 +201,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                     'CLOUDFLARE',
                                     style: TextStyle(
                                       fontSize: 8.sp,
-                                      color: Colors.white.withValues(alpha: 0.5),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.5,
+                                      ),
                                       letterSpacing: 0.5,
                                     ),
                                   ),
@@ -212,8 +214,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                           text: 'Privacy',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.5),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.5,
+                                            ),
                                             decoration:
                                                 TextDecoration.underline,
                                           ),
@@ -222,16 +225,18 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                           text: ' · ',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.3),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.3,
+                                            ),
                                           ),
                                         ),
                                         TextSpan(
                                           text: 'Help',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.5),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.5,
+                                            ),
                                             decoration:
                                                 TextDecoration.underline,
                                           ),

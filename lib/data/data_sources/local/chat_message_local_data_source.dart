@@ -15,21 +15,23 @@ class ChatMessageLocalDataSourceImpl implements ChatMessageLocalDataSource {
   final Box _box;
 
   ChatMessageLocalDataSourceImpl()
-      : _box = Hive.box(HiveService.chatMessagesBox);
+    : _box = Hive.box(HiveService.chatMessagesBox);
 
   // Key: conversationId → List of message JSON maps
   List<Map<String, dynamic>> _rawMessages(String conversationId) {
     final raw = _box.get(conversationId);
     if (raw == null) return [];
-    return (raw as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    return (raw as List)
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
   }
 
   @override
   List<ChatMessageModel> getMessages(String conversationId) {
     try {
-      return _rawMessages(conversationId)
-          .map(ChatMessageModel.fromJson)
-          .toList();
+      return _rawMessages(
+        conversationId,
+      ).map(ChatMessageModel.fromJson).toList();
     } catch (e) {
       throw CacheException(message: 'Failed to load messages: $e');
     }

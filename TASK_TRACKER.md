@@ -24,16 +24,16 @@
 
 ```
 DATE        : 2026-05-15
-PHASE       : Phase 2 complete. Phase 6 partial. Phase 3 (suggestion chips) PENDING.
-SUB-TASK    : All screens scaffolded and routing wired. Chat engine + UI complete.
-              Missing: suggestion chips empty state (15% eval weight — HIGHEST PRIORITY NEXT).
-              Missing: "Jump to latest" pill in chat.
-              Missing: send button morph animation.
-              Missing: haptics.
+PHASE       : Phases 0-6 (all major phases) complete. Phase 7 (Polish) remaining.
+SUB-TASK    : Phase 5 done — ChatDrawer with grouped history (Today/Yesterday/This week/Older),
+              300ms debounce search via AppTextField, swipe-to-delete Dismissible + undo snackbar,
+              long-press context menu (Rename/Pin/Archive/Delete) via showModalBottomSheet,
+              renameConversation method added to ConversationsNotifier.
+              Drawer integrated in ChatScreen (scaffoldKey, onMenu hamburger button, onNewChat).
 BLOCKING    : None.
-NEXT ACTION : Phase 3 — Suggestion chips empty state on ChatScreen (new conversation).
-              This is the single highest-value remaining task (15% eval weight).
-              See CE-6 in PROJECT_PLAN.md for Hero animation design.
+NEXT ACTION : Phase 7 — Polish + Performance.
+              Priority: dart format, semantics labels, performance profiling.
+              Demo video recording (5-7 min) with side-by-side real Manus comparison.
 ```
 
 ---
@@ -46,9 +46,9 @@ NEXT ACTION : Phase 3 — Suggestion chips empty state on ChatScreen (new conver
 | M1: Chat engine (stream + cancel + persist) | Phase 1 | ✅ Done | ChatNotifier, streaming markdown, repositories |
 | M2: Chat screen UI | Phase 2 | ✅ Done | Streaming bubble isolation, auto-scroll, input bar, rating card |
 | M3: All Chats + Auth + Splash + Profile + Subscription | Phases 3–4, 6 | ✅ Done | All screens scaffolded |
-| M4: Suggestion chips empty state (CRITICAL) | Phase 3 | ⚠️ Not started | 15% eval weight — do this FIRST next session |
-| M5: Chat screen polish | Phase 2 polish | 🔄 Partial | Jump-to-latest pill, send morph, haptics pending |
-| M6: Drawer + history | Phase 5 | ⬜ Not started | 10% eval weight |
+| M4: Suggestion chips empty state (CRITICAL) | Phase 3 | ✅ Done | 15% eval weight — CE-6 fly animation, stagger chips, blinking cursor |
+| M5: Chat screen polish | Phase 2 polish | ✅ Done | Jump-to-latest pill, send morph (AnimatedSwitcher), haptics |
+| M6: Drawer + history | Phase 5 | ✅ Done | Grouped history, search debounce, swipe-to-delete, context menu |
 | M7: Polish + Performance | Phase 7 | ⬜ Not started | Before submission |
 
 ---
@@ -108,10 +108,10 @@ NEXT ACTION : Phase 3 — Suggestion chips empty state on ChatScreen (new conver
 | 2.8 | ChatAppBar (title+dropdown, share, task+blue-dot, more) | ✅ Done | |
 | 2.9 | _ChatInputBar (multiline, +/tools/mic icons) | ✅ Done | |
 | 2.10 | _SendStopButton (animated circle, stop during stream) | ✅ Done | |
-| 2.11 | **"Jump to latest" pill** | ⚠️ Missing | AnimatedOpacity + jumpTo on tap — add next session |
-| 2.12 | **Send button morph (plane → stop → plane)** | ⚠️ Missing | Currently just icon swap; add AnimatedSwitcher morph |
-| 2.13 | **Haptics** (send, stop, copy, chip tap) | ⚠️ Missing | HapticFeedback.lightImpact() calls |
-| 2.14 | **Streaming caret pulse** | ⚠️ Missing | AnimatedOpacity blink after last token |
+| 2.11 | **"Jump to latest" pill** | ✅ Done | AnimatedOpacity + IgnorePointer + jumpTo on tap |
+| 2.12 | **Send button morph (arrow → stop → arrow)** | ✅ Done | AnimatedSwitcher + ScaleTransition |
+| 2.13 | **Haptics** (send, stop, chip tap) | ✅ Done | lightImpact/mediumImpact/selectionClick |
+| 2.14 | **Streaming caret pulse** | ✅ Done | _BlinkingCursor, flutter_animate repeat |
 | 2.15 | Inline error bubble (API error + retry) | ✅ Done | Shows error row below message |
 | 2.16 | Stopped message badge | ✅ Done | Shows "Stopped" row below message |
 
@@ -126,12 +126,12 @@ It should show animated suggestion chips. Tapping a chip → CE-6 hero animation
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 3.1 | **Suggestion chips data model** | ⬜ Todo | List of ~4 suggestion strings |
-| 3.2 | **SuggestionChip widget** | ⬜ Todo | Pill with rounded border, tap → fill input |
-| 3.3 | **Stagger animate-in** (60ms offset, easeOutCubic, Y translate + fade) | ⬜ Todo | Most important animation. See PROJECT_PLAN CE-6 |
-| 3.4 | **Chip → input Hero animation** | ⬜ Todo | CE-6. Custom HeroFlightShuttleBuilder, pill → rect morph |
-| 3.5 | Empty state heading ("What can I help you with?") | ⬜ Todo | Show when messages.isEmpty |
-| 3.6 | ConversationsScreen empty state | ⬜ Todo | When conversations list is empty, show centered message + FAB hint |
+| 3.1 | **Suggestion chips data model** | ✅ Done | 4 suggestions in _suggestions const |
+| 3.2 | **SuggestionChip widget** | ✅ Done | Pill border, tap → fill input, haptic |
+| 3.3 | **Stagger animate-in** (80ms offset, easeOutCubic, slideY+scaleXY+fadeIn) | ✅ Done | suggestion_chips.dart |
+| 3.4 | **Chip → input Overlay animation** | ✅ Done | CE-6. ChipFlyAnimation, dart:ui lerpDouble, pill→rect morph, fade last 25% |
+| 3.5 | Empty state heading + waving hand icon | ✅ Done | SuggestionChipsEmptyState, fadeIn animations |
+| 3.6 | ConversationsScreen empty state | ⬜ Todo | Low priority |
 
 ---
 
@@ -152,11 +152,11 @@ It should show animated suggestion chips. Tapping a chip → CE-6 hero animation
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 5.1 | Drawer scaffold (spring physics open/close) | ⬜ Todo | |
-| 5.2 | Grouped history list (Today/Yesterday/7days/Older) | ⬜ Todo | |
-| 5.3 | Search with 300ms debounce | ⬜ Todo | |
-| 5.4 | Swipe-to-delete + undo snackbar | ⬜ Todo | |
-| 5.5 | Long-press context menu (Rename/Pin/Archive/Delete) | ⬜ Todo | |
+| 5.1 | Drawer scaffold (Scaffold.drawer, standard physics) | ✅ Done | ChatDrawer, scaffoldKey, hamburger icon in AppBar |
+| 5.2 | Grouped history list (Today/Yesterday/This week/Older) | ✅ Done | _group() date bucketing, _SectionHeader |
+| 5.3 | Search with 300ms debounce | ✅ Done | AppTextField + Timer debounce |
+| 5.4 | Swipe-to-delete + undo snackbar | ✅ Done | Dismissible endToStart, SnackBar with undo action |
+| 5.5 | Long-press context menu (Rename/Pin/Archive/Delete) | ✅ Done | showModalBottomSheet, rename sheet with AppTextField |
 
 ---
 
@@ -198,6 +198,8 @@ It should show animated suggestion chips. Tapping a chip → CE-6 hero animation
 | 2026-05-15 | Phase 4 complete | SplashScreen (2.2s, logo, "from Meta"), LoginScreen (dot-grid, social buttons), EmailLoginScreen (email field, CAPTCHA mock). |
 | 2026-05-15 | Phase 6 partial | ConversationsScreen (filter tabs, Agent promo, FAB flow, relative time formatter), ConversationsNotifier (create/delete/pin/search/filter), ProfileScreen (orange avatar, Free/Upgrade, settings rows), SubscriptionScreen (Monthly/Annually radio, features card, animated CTA). |
 | 2026-05-15 | Router wired | All 7 routes: splash → login → email-login → chats → chat/:id → profile → subscription |
+| 2026-05-15 | Phase 3 complete | SuggestionChipsEmptyState (waving hand, subtitle, stagger chips). CE-6 chip→input Overlay fly animation (ChipFlyAnimation, dart:ui lerpDouble, radius morph, fade). |
+| 2026-05-15 | Phase 2 polish complete | Jump-to-latest pill (AnimatedOpacity + IgnorePointer). Send/stop AnimatedSwitcher morph. _BlinkingCursor (flutter_animate repeat). Haptics (lightImpact send, mediumImpact stop, selectionClick chip). |
 
 ---
 

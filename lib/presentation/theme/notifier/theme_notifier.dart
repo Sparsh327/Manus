@@ -12,8 +12,7 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   @override
   ThemeMode build() {
-    final stored =
-        Hive.box(HiveService.settingsBox).get(_key) as String?;
+    final stored = Hive.box(HiveService.settingsBox).get(_key) as String?;
     return _fromString(stored);
   }
 
@@ -23,8 +22,8 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   }
 
   ThemeMode _fromString(String? value) => switch (value) {
-        'light' => ThemeMode.light,
-        'dark' => ThemeMode.dark,
-        _ => ThemeMode.system,
-      };
+    'light' => ThemeMode.light,
+    'dark' => ThemeMode.dark,
+    _ => ThemeMode.system,
+  };
 }

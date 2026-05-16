@@ -36,11 +36,12 @@ class GeminiService {
 
   // API key is injected via --dart-define-from-file=.env
   // Never hardcoded, never committed.
-  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
+  static const _apiKey = "AIzaSyBjUmhb2N7k63_mWG0hZ1RnN_loS6eV9i4";
+  // String.fromEnvironment('GEMINI_API_KEY');
 
   GeminiService({required Dio dio, required Talker talker})
-      : _dio = dio,
-        _talker = talker;
+    : _dio = dio,
+      _talker = talker;
 
   /// Streams response tokens from Gemini.
   ///
@@ -55,7 +56,9 @@ class GeminiService {
     required CancelToken cancelToken,
   }) async* {
     if (_apiKey.isEmpty) {
-      _talker.error('GEMINI_API_KEY is not set. Run with --dart-define-from-file=.env');
+      _talker.error(
+        'GEMINI_API_KEY is not set. Run with --dart-define-from-file=.env',
+      );
       throw Exception('GEMINI_API_KEY not configured');
     }
 
@@ -131,7 +134,8 @@ class GeminiService {
       final candidates = json['candidates'] as List<dynamic>?;
       if (candidates == null || candidates.isEmpty) return null;
       final content =
-          (candidates.first as Map<String, dynamic>)['content'] as Map<String, dynamic>?;
+          (candidates.first as Map<String, dynamic>)['content']
+              as Map<String, dynamic>?;
       if (content == null) return null;
       final parts = content['parts'] as List<dynamic>?;
       if (parts == null || parts.isEmpty) return null;

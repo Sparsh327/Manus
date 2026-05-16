@@ -57,7 +57,10 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 title: Text(
                   product.title,
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Text(
                   '\$${product.price}',

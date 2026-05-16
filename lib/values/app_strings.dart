@@ -32,5 +32,4 @@ class ErrorMessages {
   static const String error_404 = 'Page not found';
   static const String error_500 = 'Internal Server Error';
   static const String error_403 = 'You do not have access to this resource';
-
 }

@@ -20,10 +20,10 @@ class MarkdownBlock {
   });
 
   MarkdownBlock appendLine(String line) => MarkdownBlock(
-        type: type,
-        content: content.isEmpty ? line : '$content\n$line',
-        language: language,
-      );
+    type: type,
+    content: content.isEmpty ? line : '$content\n$line',
+    language: language,
+  );
 
   bool get isComplete => true;
 

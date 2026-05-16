@@ -13,6 +13,7 @@
 **Backend:** Google Gemini API (gemini-2.5-flash, free tier). Streaming via raw Dio + SSE. No mock data for chat.
 
 **Evaluation weight (approximate):**
+
 - Chat screen (streaming, markdown, scroll, bubbles): ~40%
 - Home empty state suggestion chip animation: ~15%
 - Drawer + history (spring physics): ~10%
@@ -27,19 +28,19 @@
 
 ## Evaluation Priority Map
 
-| Priority | Feature | Why It Weighs So Much |
-|---|---|---|
-| P0 | Streaming markdown renderer | Explicitly called "the hardest engineering problem". Tested frame-by-frame. |
-| P0 | Suggestion chip → input field animation | Evaluator quote: *"This single animation says more about you than any test suite."* |
-| P1 | Chat screen overall | Most evaluation weight of any single screen |
-| P1 | Smart auto-scroll (release/re-engage) | Explicitly listed as "will be tested" |
-| P1 | Stream cancellation (Dio CancelToken) | Tested: must actually cancel the HTTP request, not just ignore tokens |
-| P1 | iOS typography (SF Pro, not Inter) | Quote: *"Inter on iOS = immediate fail"* |
-| P2 | Drawer spring physics | "Must feel like iOS sheet physics even on Android" |
-| P2 | Send button morph (plane→spinner→stop) | Must morph, not crossfade |
-| P3 | Onboarding spring page indicator | Spring physics, not linear |
-| P3 | Code block copy checkmark morph | 1.5s revert, haptic, morph not crossfade |
-| P4 | Settings, Paywall | UI only, lower weight |
+| Priority | Feature                                 | Why It Weighs So Much                                                               |
+| -------- | --------------------------------------- | ----------------------------------------------------------------------------------- |
+| P0       | Streaming markdown renderer             | Explicitly called "the hardest engineering problem". Tested frame-by-frame.         |
+| P0       | Suggestion chip → input field animation | Evaluator quote: _"This single animation says more about you than any test suite."_ |
+| P1       | Chat screen overall                     | Most evaluation weight of any single screen                                         |
+| P1       | Smart auto-scroll (release/re-engage)   | Explicitly listed as "will be tested"                                               |
+| P1       | Stream cancellation (Dio CancelToken)   | Tested: must actually cancel the HTTP request, not just ignore tokens               |
+| P1       | iOS typography (SF Pro, not Inter)      | Quote: _"Inter on iOS = immediate fail"_                                            |
+| P2       | Drawer spring physics                   | "Must feel like iOS sheet physics even on Android"                                  |
+| P2       | Send button morph (plane→spinner→stop)  | Must morph, not crossfade                                                           |
+| P3       | Onboarding spring page indicator        | Spring physics, not linear                                                          |
+| P3       | Code block copy checkmark morph         | 1.5s revert, haptic, morph not crossfade                                            |
+| P4       | Settings, Paywall                       | UI only, lower weight                                                               |
 
 ---
 
@@ -56,6 +57,7 @@
 **Why not riverpod_generator:** Forbidden by `CONTEXT.md` spec. Also — evaluators may grep for `@riverpod`.
 
 **Provider organization:**
+
 - Infrastructure providers → `core/providers/core_providers.dart`
 - Feature data providers (data sources + repository) → `data/providers/<feature>_data_providers.dart`
 - Feature notifier + NotifierProvider → `presentation/<feature>/notifier/<feature>_notifier.dart`
@@ -81,6 +83,7 @@ ref.listen<AuthState>(authProvider, (_, next) {
 **Decision:** Hive for conversation and message persistence. Conversations survive app restart.
 
 **Box strategy:**
+
 - `conversations` box → `ConversationModel` list (metadata only: id, title, createdAt, updatedAt, pinned, archived)
 - `messages_<conversationId>` box → `ChatMessageModel` list per conversation
 
@@ -97,6 +100,7 @@ GetIt was removed in Phase 0 migration.
 **Decision:** Repository layer returns `Either<Failure, Output>` (dartz). Notifiers call `.fold()` and update state with error message. Screens render inline error UI — never dialogs, never snackbars for API errors.
 
 **Failure types:**
+
 - `ServerFailure` — API/HTTP errors
 - `CacheFailure` — Hive read/write errors
 - `ConnectionFailure` — no internet
@@ -112,22 +116,23 @@ All state classes are plain Dart immutable classes with manual `copyWith`. This 
 
 ## Package Decisions
 
-| Package | Version | Decision & Reasoning |
-|---|---|---|
-| `flutter_riverpod` | ^2.6.1 | Required by spec. Notifier/AsyncNotifier API only. |
-| `go_router` | ^17.0.0 | Required by spec. Typed routes. |
-| `dio` | ^5.9.0 | Required for Gemini SSE streaming with CancelToken. |
-| `hive` | ^2.2.3 | Local persistence. Already configured. |
-| `dartz` | ^0.10.1 | Either<L,R> for functional error handling. |
-| `equatable` | ^2.0.8 | Value equality for domain entities. |
-| `flutter_screenutil` | ^5.9.3 | All dimensions go through `.w`, `.h`, `.sp`, `.r`. |
-| `flutter_animate` | TBD | Primary animation layer. Spring physics + stagger. |
-| `cached_network_image` | TBD | Required by spec. Always pass `cacheWidth`/`cacheHeight`. |
-| `flutter_svg` | TBD | Custom illustrations for empty/error states. |
-| `talker` | TBD | General-purpose logger. `print()`/`debugPrint()` are forbidden. |
-| `connectivity_plus` | ^7.0.0 | Network state detection. Already configured. |
+| Package                | Version | Decision & Reasoning                                            |
+| ---------------------- | ------- | --------------------------------------------------------------- |
+| `flutter_riverpod`     | ^2.6.1  | Required by spec. Notifier/AsyncNotifier API only.              |
+| `go_router`            | ^17.0.0 | Required by spec. Typed routes.                                 |
+| `dio`                  | ^5.9.0  | Required for Gemini SSE streaming with CancelToken.             |
+| `hive`                 | ^2.2.3  | Local persistence. Already configured.                          |
+| `dartz`                | ^0.10.1 | Either<L,R> for functional error handling.                      |
+| `equatable`            | ^2.0.8  | Value equality for domain entities.                             |
+| `flutter_screenutil`   | ^5.9.3  | All dimensions go through `.w`, `.h`, `.sp`, `.r`.              |
+| `flutter_animate`      | TBD     | Primary animation layer. Spring physics + stagger.              |
+| `cached_network_image` | TBD     | Required by spec. Always pass `cacheWidth`/`cacheHeight`.       |
+| `flutter_svg`          | TBD     | Custom illustrations for empty/error states.                    |
+| `talker`               | TBD     | General-purpose logger. `print()`/`debugPrint()` are forbidden. |
+| `connectivity_plus`    | ^7.0.0  | Network state detection. Already configured.                    |
 
 **NOT using:**
+
 - `google_generative_ai` SDK — cannot expose Dio `CancelToken` for true HTTP cancellation. Use raw Dio + SSE instead.
 - `flutter_markdown` for streaming — causes full tree rebuild on every token. Use custom block-segmented renderer.
 - `riverpod_generator` — forbidden by spec.
@@ -138,7 +143,7 @@ All state classes are plain Dart immutable classes with manual `copyWith`. This 
 
 ## Critical Engineering Decisions
 
-*Only difficult/high-impact decisions are documented here. Simple CRUD features are not.*
+_Only difficult/high-impact decisions are documented here. Simple CRUD features are not._
 
 ---
 
@@ -149,6 +154,7 @@ All state classes are plain Dart immutable classes with manual `copyWith`. This 
 **Chosen approach: Custom block-segmented renderer**
 
 **Architecture:**
+
 ```
 StreamingMarkdownView
   └── Column
@@ -161,6 +167,7 @@ StreamingMarkdownView
 **Block types to handle:** `paragraph`, `codeFence`, `bulletList`, `numberedList`, `heading`, `blockquote`, `table`, `horizontalRule`
 
 **Parser state machine:**
+
 - Processes the stream character-by-character / line-by-line
 - Maintains `currentBlock` + `isCurrentBlockComplete`
 - A block is "complete" when its closing delimiter is received (blank line for paragraph, ` ``` ` for code fence, etc.)
@@ -241,7 +248,7 @@ bool _autoScrollEnabled = true;
 void _onScroll() {
   final pos = _scrollController.position;
   final atBottom = pos.pixels >= pos.maxScrollExtent - 40;
-  
+
   if (!atBottom && _autoScrollEnabled) {
     setState(() { _autoScrollEnabled = false; _showJumpPill = true; });
   } else if (atBottom && !_autoScrollEnabled) {
@@ -273,11 +280,13 @@ void _pinToBottom() {
 **Chosen approach: Raw Dio with SSE parsing**
 
 **Gemini SSE endpoint:**
+
 ```
 POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key={API_KEY}
 ```
 
 **Response format:** Server-Sent Events. Each event is:
+
 ```
 data: {"candidates":[{"content":{"parts":[{"text":"token"}]}}]}
 
@@ -285,6 +294,7 @@ data: {"candidates":[{"content":{"parts":[{"text":" here"}]}}]}
 ```
 
 **SSE parser logic:**
+
 ```dart
 Stream<String> _parseSSE(Stream<Uint8List> byteStream) async* {
   final buffer = StringBuffer();
@@ -353,6 +363,7 @@ Hero(
 ```
 
 On chip tap:
+
 1. Set `activeChipText` in state
 2. Trigger the Hero transition — Flutter animates the chip rect → input rect
 3. On animation complete, clear `activeChipText`, populate `inputController.text`
@@ -365,6 +376,7 @@ On chip tap:
 ## Implementation Phases
 
 ### Phase 0 — Foundation ✅ Partially Complete
+
 - [x] Riverpod migration (remove BLoC, Freezed, GetIt)
 - [x] Update AGENTS.md
 - [ ] Add missing packages (flutter_animate, cached_network_image, flutter_svg, talker)
@@ -375,6 +387,7 @@ On chip tap:
 - [ ] Logger (Talker) wired up globally
 
 ### Phase 1 — Chat Domain + Core Engine
+
 - [ ] Conversation + ChatMessage entities
 - [ ] Hive models + adapters
 - [ ] ConversationRepository + ChatMessageRepository
@@ -383,6 +396,7 @@ On chip tap:
 - [ ] Custom streaming markdown renderer (block-segmented)
 
 ### Phase 2 — Chat Screen UI
+
 - [ ] Message list (ListView.builder, stable keys)
 - [ ] User message bubble (right-aligned, spring entrance)
 - [ ] Assistant message (left-aligned, spring entrance)
@@ -396,12 +410,14 @@ On chip tap:
 - [ ] App lifecycle stream handling
 
 ### Phase 3 — Home / Empty State
+
 - [ ] Suggestion chips (stagger animate in, 60ms, easeOutCubic)
 - [ ] Chip → input field hero animation
 - [ ] Model picker pill
 - [ ] Home → Chat transition
 
 ### Phase 4 — Auth + Onboarding + Splash
+
 - [ ] Splash animated logo sequence
 - [ ] Onboarding 3 slides (animated illustrations, spring page indicator)
 - [ ] Auth screen (email/Google/Apple buttons)
@@ -409,6 +425,7 @@ On chip tap:
 - [ ] Success transition to Home
 
 ### Phase 5 — Chat Drawer + History
+
 - [ ] Drawer spring physics (damped, matches iOS sheet feel)
 - [ ] Grouped sections from Hive (Today/Yesterday/7 days/Older)
 - [ ] Sticky section headers
@@ -419,12 +436,14 @@ On chip tap:
 - [ ] Infinite scroll
 
 ### Phase 6 — Remaining Screens
+
 - [ ] Mode Picker bottom sheet (icon morphs between modes)
 - [ ] Attachment tray (animated reveal, thumbnails, drag-to-reorder)
 - [ ] Settings screen (iOS-style grouped list, theme toggle)
 - [ ] Paywall/Subscription screen (UI only, no real payments)
 
 ### Phase 7 — Polish + Performance
+
 - [ ] Haptics (all interaction points per spec)
 - [ ] Accessibility (Semantics labels on all interactive elements)
 - [ ] Font scale 200% layout testing
@@ -449,6 +468,7 @@ Before building each screen, screenshots are taken from the live Manus app and s
 6. **Animation timing** — record at 240fps, step frame-by-frame to estimate duration + easing
 
 **Screenshot priority order:**
+
 1. Chat screen (active stream, code block visible)
 2. Home empty state (chips visible)
 3. Auth screen (default + error state)
@@ -461,20 +481,20 @@ Before building each screen, screenshots are taken from the live Manus app and s
 
 ## Performance Budget
 
-| Metric | Target |
-|---|---|
-| Frame rate (streaming) | 60fps minimum — no frames >16ms (99% of time) |
-| Cold start | <2.5s Pixel 6 / <2.0s iPhone 13 (release build) |
-| Time to first token | <800ms after send tap |
-| 200-message scroll | Zero dropped frames |
-| Memory (200 msgs + 5 images) | <250MB RSS |
-| Release APK size | <35MB universal |
+| Metric                       | Target                                          |
+| ---------------------------- | ----------------------------------------------- |
+| Frame rate (streaming)       | 60fps minimum — no frames >16ms (99% of time)   |
+| Cold start                   | <2.5s Pixel 6 / <2.0s iPhone 13 (release build) |
+| Time to first token          | <800ms after send tap                           |
+| 200-message scroll           | Zero dropped frames                             |
+| Memory (200 msgs + 5 images) | <250MB RSS                                      |
+| Release APK size             | <35MB universal                                 |
 
 ---
 
 ## Coding Standards (Quick Reference)
 
-*Full version in AGENTS.md*
+_Full version in AGENTS.md_
 
 - All dimensions via `flutter_screenutil`: `.w`, `.h`, `.sp`, `.r`
 - All navigation via `context.go()` — never `Navigator.push`
@@ -490,32 +510,32 @@ Before building each screen, screenshots are taken from the live Manus app and s
 
 ## Anti-Patterns — What NOT To Do
 
-| Anti-Pattern | Why | What To Do Instead |
-|---|---|---|
-| `Markdown(data: fullText)` during streaming | Full tree rebuild per token → jank | Custom block-segmented renderer |
-| `animateTo()` for auto-scroll | Competing animations → stutter | `jumpTo()` via `addPostFrameCallback` |
-| `google_generative_ai` SDK | Cannot expose CancelToken | Raw Dio + SSE parsing |
-| Inter font on iOS | #1 clone detection tell → immediate fail | `fontFamily: Platform.isIOS ? null : 'Inter'` |
-| `StreamProvider` for chat | Cannot cancel + preserve partial | `Notifier` with explicit `StreamSubscription` |
-| Dialogs/alerts for API errors | Spec explicitly forbids it | Inline error bubble with retry |
-| `Navigator.push` | Forbidden by spec | `context.go()` / `context.push()` |
-| `StateNotifier` | Deprecated | `Notifier` / `AsyncNotifier` |
-| `@riverpod` codegen | Forbidden by spec | Manual `NotifierProvider<N, S>(N.new)` |
-| `@freezed` | Removed from project | Plain immutable class with manual `copyWith` |
-| `ElevatedButton` / `TextField` raw | Evaluators grep for these | Wrap in project-level components |
-| Empty catch blocks | Forbidden | Always log the error via Talker |
-| Snackbars for API errors | Reserved for ephemeral confirms only | Inline error UI on the message |
+| Anti-Pattern                                | Why                                      | What To Do Instead                            |
+| ------------------------------------------- | ---------------------------------------- | --------------------------------------------- |
+| `Markdown(data: fullText)` during streaming | Full tree rebuild per token → jank       | Custom block-segmented renderer               |
+| `animateTo()` for auto-scroll               | Competing animations → stutter           | `jumpTo()` via `addPostFrameCallback`         |
+| `google_generative_ai` SDK                  | Cannot expose CancelToken                | Raw Dio + SSE parsing                         |
+| Inter font on iOS                           | #1 clone detection tell → immediate fail | `fontFamily: Platform.isIOS ? null : 'Inter'` |
+| `StreamProvider` for chat                   | Cannot cancel + preserve partial         | `Notifier` with explicit `StreamSubscription` |
+| Dialogs/alerts for API errors               | Spec explicitly forbids it               | Inline error bubble with retry                |
+| `Navigator.push`                            | Forbidden by spec                        | `context.go()` / `context.push()`             |
+| `StateNotifier`                             | Deprecated                               | `Notifier` / `AsyncNotifier`                  |
+| `@riverpod` codegen                         | Forbidden by spec                        | Manual `NotifierProvider<N, S>(N.new)`        |
+| `@freezed`                                  | Removed from project                     | Plain immutable class with manual `copyWith`  |
+| `ElevatedButton` / `TextField` raw          | Evaluators grep for these                | Wrap in project-level components              |
+| Empty catch blocks                          | Forbidden                                | Always log the error via Talker               |
+| Snackbars for API errors                    | Reserved for ephemeral confirms only     | Inline error UI on the message                |
 
 ---
 
 ## Pending Decisions
 
-| # | Decision | Options | Status |
-|---|---|---|---|
-| PD-1 | Hive TypeAdapters vs JSON map storage | TypeAdapters (type-safe, fast) vs raw Map (simple, already done in boilerplate) | Pending — decide when building chat domain |
-| PD-2 | flutter_animate vs Rive for specific animations | flutter_animate for most; Rive only if an animation needs a proper timeline (e.g., logo) | Pending — decide at Phase 4 (Splash) |
-| PD-3 | custom markdown renderer: line-by-line vs token buffer | Line-by-line is simpler; token buffer handles partial lines | Pending — decide at Phase 1 |
+| #    | Decision                                               | Options                                                                                  | Status                                     |
+| ---- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
+| PD-1 | Hive TypeAdapters vs JSON map storage                  | TypeAdapters (type-safe, fast) vs raw Map (simple, already done in boilerplate)          | Pending — decide when building chat domain |
+| PD-2 | flutter_animate vs Rive for specific animations        | flutter_animate for most; Rive only if an animation needs a proper timeline (e.g., logo) | Pending — decide at Phase 4 (Splash)       |
+| PD-3 | custom markdown renderer: line-by-line vs token buffer | Line-by-line is simpler; token buffer handles partial lines                              | Pending — decide at Phase 1                |
 
 ---
 
-*Last updated: Phase 0 (Foundation — partially complete)*
+_Last updated: Phase 0 (Foundation — partially complete)_

@@ -118,7 +118,9 @@ class ProfileScreen extends StatelessWidget {
                       onTap: () => context.push(AppRoutes.subscription),
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 8.h),
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
                         decoration: BoxDecoration(
                           color: isDark ? Colors.white : Colors.black,
                           borderRadius: BorderRadius.circular(8.r),

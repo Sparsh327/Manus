@@ -8,11 +8,10 @@ import 'package:manus/domain/repositories/conversation_repository.dart';
 
 final conversationLocalDataSourceProvider =
     Provider<ConversationLocalDataSource>(
-  (_) => ConversationLocalDataSourceImpl(),
-);
+      (_) => ConversationLocalDataSourceImpl(),
+    );
 
-final chatMessageLocalDataSourceProvider =
-    Provider<ChatMessageLocalDataSource>(
+final chatMessageLocalDataSourceProvider = Provider<ChatMessageLocalDataSource>(
   (_) => ChatMessageLocalDataSourceImpl(),
 );
 
@@ -23,7 +22,6 @@ final conversationRepositoryProvider = Provider<ConversationRepository>(
 );
 
 final chatMessageRepositoryProvider = Provider<ChatMessageRepository>(
-  (ref) => ChatMessageRepositoryImpl(
-    ref.watch(chatMessageLocalDataSourceProvider),
-  ),
+  (ref) =>
+      ChatMessageRepositoryImpl(ref.watch(chatMessageLocalDataSourceProvider)),
 );

@@ -8,9 +8,9 @@ import 'package:manus/data/providers/chat_data_providers.dart';
 import 'package:manus/domain/entities/chat_message.dart';
 import 'package:manus/domain/entities/conversation.dart';
 import 'package:manus/presentation/chat/notifier/chat_state.dart';
+import 'package:manus/presentation/conversations/notifier/conversations_notifier.dart';
 
-final chatProvider =
-    NotifierProvider.family<ChatNotifier, ChatState, String>(
+final chatProvider = NotifierProvider.family<ChatNotifier, ChatState, String>(
   ChatNotifier.new,
 );
 
@@ -36,16 +36,18 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
     final conversation = state.conversation;
     if (conversation == null) return;
 
-    // 1. Persist user message.
+    final isFirstMessage =
+        state.messages.isEmpty && conversation.title == 'New conversation';
+
+    // Snapshot history BEFORE adding new messages to state — correct context.
+    final prevHistory = _buildHistory();
+
     final userMsg = _buildMessage(
       conversation.id,
       MessageRole.user,
       trimmed,
       MessageStatus.complete,
     );
-    await _persistMessage(userMsg);
-
-    // 2. Build optimistic assistant placeholder (streaming).
     final assistantMsg = _buildMessage(
       conversation.id,
       MessageRole.assistant,
@@ -53,26 +55,29 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
       MessageStatus.streaming,
     );
 
+    // ⚡ OPTIMISTIC — update UI immediately, before any I/O.
+    // User bubble + thinking indicator appear in the same frame as the tap.
     state = state.copyWith(
       status: ChatStatus.streaming,
       messages: [...state.messages, userMsg, assistantMsg],
       streamingContent: '',
     );
 
-    // 3. Touch conversation updatedAt.
-    await _touchConversation(conversation);
+    // Fire-and-forget I/O — never block the stream start.
+    _persistMessage(userMsg)
+        .catchError((Object e) => logger.error('persist user msg failed', e));
+    _updateConversationMeta(conversation, trimmed, isFirstMessage)
+        .catchError((Object e) => logger.error('update meta failed', e));
 
-    // 4. Stream from Gemini.
+    // Start Gemini stream immediately after UI update.
     _cancelToken = CancelToken();
-    final history = _buildHistory();
     final gemini = ref.read(geminiServiceProvider);
-
     var accumulated = '';
 
     try {
       final stream = gemini.streamResponse(
         prompt: trimmed,
-        history: history,
+        history: prevHistory,
         cancelToken: _cancelToken!,
       );
 
@@ -95,6 +100,30 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
     } catch (e) {
       logger.error('Failed to start Gemini stream', e);
       _markStreamError(assistantMsg.id, accumulated);
+    }
+  }
+
+  Future<void> _updateConversationMeta(
+    Conversation conversation,
+    String firstText,
+    bool isFirstMessage,
+  ) async {
+    if (isFirstMessage) {
+      final autoTitle =
+          firstText.length > 45 ? '${firstText.substring(0, 45)}…' : firstText;
+      final renamed = conversation.copyWith(
+        title: autoTitle,
+        updatedAt: DateTime.now(),
+      );
+      await ref
+          .read(conversationRepositoryProvider)
+          .updateConversation(renamed);
+      state = state.copyWith(conversation: renamed);
+      ref
+          .read(conversationsProvider.notifier)
+          .refreshConversation(renamed.id);
+    } else {
+      await _touchConversation(conversation);
     }
   }
 
@@ -126,8 +155,7 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
     final msgs = state.messages;
     if (msgs.isEmpty) return;
     // Find the last user message.
-    final lastUserIdx =
-        msgs.lastIndexWhere((m) => m.role == MessageRole.user);
+    final lastUserIdx = msgs.lastIndexWhere((m) => m.role == MessageRole.user);
     if (lastUserIdx == -1) return;
     await editAndResend(lastUserIdx, msgs[lastUserIdx].content);
   }
@@ -164,11 +192,11 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
     );
   }
 
-  void _finalizeStream(
+  Future<void> _finalizeStream(
     String assistantMsgId,
     String content, {
     bool stopped = false,
-  }) {
+  }) async {
     final status = stopped ? MessageStatus.stopped : MessageStatus.complete;
     final updatedMsgs = state.messages.map((m) {
       if (m.id == assistantMsgId) {
@@ -184,9 +212,24 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
     );
 
     // Persist the finalized assistant message.
-    final finalMsg =
-        updatedMsgs.firstWhere((m) => m.id == assistantMsgId);
-    _persistMessage(finalMsg);
+    final finalMsg = updatedMsgs.firstWhere((m) => m.id == assistantMsgId);
+    await _persistMessage(finalMsg);
+
+    // Save last message preview to conversation for history screen.
+    final conv = state.conversation;
+    if (conv != null && content.isNotEmpty) {
+      final preview =
+          content.length > 80 ? '${content.substring(0, 80)}…' : content;
+      final updated = conv.copyWith(
+        lastMessagePreview: preview,
+        updatedAt: DateTime.now(),
+      );
+      await ref
+          .read(conversationRepositoryProvider)
+          .updateConversation(updated);
+      state = state.copyWith(conversation: updated);
+      ref.read(conversationsProvider.notifier).refreshConversation(updated.id);
+    }
   }
 
   void _markStreamError(String assistantMsgId, String partial) {
@@ -214,21 +257,21 @@ class ChatNotifier extends FamilyNotifier<ChatState, String> {
 
   Future<void> _touchConversation(Conversation conversation) async {
     final updated = conversation.copyWith(updatedAt: DateTime.now());
-    await ref
-        .read(conversationRepositoryProvider)
-        .updateConversation(updated);
+    await ref.read(conversationRepositoryProvider).updateConversation(updated);
     state = state.copyWith(conversation: updated);
   }
 
   List<Map<String, dynamic>> _buildHistory() {
     return state.messages
         .where((m) => m.status == MessageStatus.complete)
-        .map((m) => {
-              'role': m.role == MessageRole.user ? 'user' : 'model',
-              'parts': [
-                {'text': m.content},
-              ],
-            })
+        .map(
+          (m) => {
+            'role': m.role == MessageRole.user ? 'user' : 'model',
+            'parts': [
+              {'text': m.content},
+            ],
+          },
+        )
         .toList();
   }
 

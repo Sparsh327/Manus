@@ -100,11 +100,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                     }
                   });
                 },
-                icon: Icon(
-                  Icons.search,
-                  size: 24.r,
-                  color: cs.onSurface,
-                ),
+                icon: Icon(Icons.search, size: 24.r, color: cs.onSurface),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -121,12 +117,15 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
       child: TextField(
         controller: _searchCtrl,
         autofocus: true,
-        onChanged: (v) =>
-            ref.read(conversationsProvider.notifier).setSearch(v),
+        onChanged: (v) => ref.read(conversationsProvider.notifier).setSearch(v),
         style: TextStyle(fontSize: 15.sp, color: cs.onSurface),
         decoration: InputDecoration(
           hintText: 'Search conversations…',
-          prefixIcon: Icon(Icons.search, size: 20.r, color: cs.onSurfaceVariant),
+          prefixIcon: Icon(
+            Icons.search,
+            size: 20.r,
+            color: cs.onSurfaceVariant,
+          ),
           suffixIcon: IconButton(
             onPressed: () {
               _searchCtrl.clear();
@@ -140,7 +139,10 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
   }
 
   Widget _buildFilterTabs(
-      ConversationsState state, bool isDark, ColorScheme cs) {
+    ConversationsState state,
+    bool isDark,
+    ColorScheme cs,
+  ) {
     const filters = ConversationsFilter.values;
     final labels = ['All', 'Agent', 'Scheduled', 'Favorites'];
 
@@ -158,13 +160,12 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                 ref.read(conversationsProvider.notifier).setFilter(filters[i]),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: active
                     ? (isDark
-                        ? AppColors.darkSurfaceElevated
-                        : AppColors.lightSurfaceElevated)
+                          ? AppColors.darkSurfaceElevated
+                          : AppColors.lightSurfaceElevated)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20.r),
               ),
@@ -173,9 +174,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                  color: active
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant,
+                  color: active ? cs.onSurface : cs.onSurfaceVariant,
                 ),
               ),
             ),
@@ -185,8 +184,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
     );
   }
 
-  Widget _buildList(
-      ConversationsState state, bool isDark, ColorScheme cs) {
+  Widget _buildList(ConversationsState state, bool isDark, ColorScheme cs) {
     final conversations = state.displayed;
 
     // Build item list: Agent promo card always first, then real conversations
@@ -195,9 +193,10 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
       itemCount: conversations.length + 1, // +1 for Agent promo
       itemBuilder: (_, i) {
         if (i == 0) {
-          return _AgentPromoTile(isDark: isDark, cs: cs)
-              .animate()
-              .fadeIn(duration: 300.ms);
+          return _AgentPromoTile(
+            isDark: isDark,
+            cs: cs,
+          ).animate().fadeIn(duration: 300.ms);
         }
         final conv = conversations[i - 1];
         return _ConversationTile(
@@ -205,8 +204,9 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
           isDark: isDark,
           cs: cs,
           onTap: () => context.push(AppRoutes.chat(conv.id)),
-          onDelete: () =>
-              ref.read(conversationsProvider.notifier).deleteConversation(conv.id),
+          onDelete: () => ref
+              .read(conversationsProvider.notifier)
+              .deleteConversation(conv.id),
         ).animate().fadeIn(duration: 250.ms, delay: (i * 40).ms);
       },
     );
@@ -319,7 +319,9 @@ class _AgentAvatar extends StatelessWidget {
       child: Icon(
         Icons.radar_rounded,
         size: 26.r,
-        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+        color: isDark
+            ? AppColors.darkTextSecondary
+            : AppColors.lightTextSecondary,
       ),
     );
   }
@@ -405,7 +407,8 @@ class _ConversationTile extends StatelessWidget {
                   ),
                   SizedBox(height: 3.h),
                   Text(
-                    'Manus will continue working after your request…',
+                    conversation.lastMessagePreview ??
+                        'Manus will help you accomplish this task.',
                     style: TextStyle(
                       fontSize: 13.sp,
                       color: cs.onSurfaceVariant,
@@ -463,8 +466,18 @@ class _ConversationTile extends StatelessWidget {
       return days[dt.weekday - 1];
     } else {
       const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       return '${months[dt.month - 1]} ${dt.day}';
     }
@@ -487,7 +500,9 @@ class _ConvAvatar extends StatelessWidget {
       child: Icon(
         Icons.forum_outlined,
         size: 24.r,
-        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+        color: isDark
+            ? AppColors.darkTextSecondary
+            : AppColors.lightTextSecondary,
       ),
     );
   }

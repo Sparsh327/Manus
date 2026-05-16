@@ -69,7 +69,7 @@ dependencies:
   firebase_messaging: ^16.0.4
 
   #utility
-  flutter_local_notifications: ^19.5.0
+
   intl: ^0.20.2
   dotenv: ^4.2.0
 
@@ -97,4 +97,5 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/logo/
     - assets/icons/

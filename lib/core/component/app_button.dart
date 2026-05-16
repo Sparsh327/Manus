@@ -28,10 +28,22 @@ class AppButton extends StatelessWidget {
     final cs = theme.colorScheme;
 
     final (bg, fg, border) = switch (variant) {
-      AppButtonVariant.primary => (AppColors.accent, Colors.white, Colors.transparent),
+      AppButtonVariant.primary => (
+        AppColors.accent,
+        Colors.white,
+        Colors.transparent,
+      ),
       AppButtonVariant.secondary => (cs.surface, cs.onSurface, cs.outline),
-      AppButtonVariant.ghost => (Colors.transparent, cs.onSurface, Colors.transparent),
-      AppButtonVariant.danger => (AppColors.error, Colors.white, Colors.transparent),
+      AppButtonVariant.ghost => (
+        Colors.transparent,
+        cs.onSurface,
+        Colors.transparent,
+      ),
+      AppButtonVariant.danger => (
+        AppColors.error,
+        Colors.white,
+        Colors.transparent,
+      ),
     };
 
     return SizedBox(
@@ -55,19 +67,13 @@ class AppButton extends StatelessWidget {
             ? SizedBox(
                 width: 18.w,
                 height: 18.w,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: fg,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 2, color: fg),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (icon != null) ...[
-                    icon!,
-                    SizedBox(width: 8.w),
-                  ],
+                  if (icon != null) ...[icon!, SizedBox(width: 8.w)],
                   Text(
                     label,
                     style: TextStyle(

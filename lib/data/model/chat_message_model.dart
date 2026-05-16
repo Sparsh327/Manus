@@ -22,20 +22,20 @@ class ChatMessageModel extends ChatMessage {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'conversationId': conversationId,
-        'role': role.name,
-        'content': content,
-        'status': status.name,
-        'createdAt': createdAt.millisecondsSinceEpoch,
-      };
+    'id': id,
+    'conversationId': conversationId,
+    'role': role.name,
+    'content': content,
+    'status': status.name,
+    'createdAt': createdAt.millisecondsSinceEpoch,
+  };
 
   factory ChatMessageModel.fromEntity(ChatMessage m) => ChatMessageModel(
-        id: m.id,
-        conversationId: m.conversationId,
-        role: m.role,
-        content: m.content,
-        status: m.status,
-        createdAt: m.createdAt,
-      );
+    id: m.id,
+    conversationId: m.conversationId,
+    role: m.role,
+    content: m.content,
+    status: m.status,
+    createdAt: m.createdAt,
+  );
 }

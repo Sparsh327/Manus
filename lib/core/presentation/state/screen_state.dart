@@ -13,9 +13,12 @@ class ScreenState<T> {
     this.isLoadingMore = false,
   });
 
-  factory ScreenState.initial() => const ScreenState(status: ScreenStatus.initial);
-  factory ScreenState.loading() => const ScreenState(status: ScreenStatus.loading);
-  factory ScreenState.loaded(T data) => ScreenState(status: ScreenStatus.loaded, data: data);
+  factory ScreenState.initial() =>
+      const ScreenState(status: ScreenStatus.initial);
+  factory ScreenState.loading() =>
+      const ScreenState(status: ScreenStatus.loading);
+  factory ScreenState.loaded(T data) =>
+      ScreenState(status: ScreenStatus.loaded, data: data);
   factory ScreenState.error(String message) =>
       ScreenState(status: ScreenStatus.error, error: message);
 
