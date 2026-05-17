@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:manus/router/app_routes.dart';
+import 'package:manus/theme/app_colors.dart';
 
 class EmailLoginScreen extends StatefulWidget {
   const EmailLoginScreen({super.key});
@@ -32,12 +33,17 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
       body: Stack(
         children: [
-          // Subtle dot grid
-          CustomPaint(painter: _SubtleDotPainter(), size: Size.infinite),
+          CustomPaint(
+            painter: _SubtleDotPainter(isDark: isDark),
+            size: Size.infinite,
+          ),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,9 +55,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                     children: [
                       IconButton(
                         onPressed: () => context.pop(),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.chevron_left,
-                          color: Colors.white,
+                          color: cs.onSurface,
                           size: 28,
                         ),
                       ),
@@ -62,7 +68,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: cs.onSurface,
                             ),
                           ),
                         ),
@@ -79,7 +85,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                       Icon(
                         Icons.waving_hand_rounded,
                         size: 20.r,
-                        color: Colors.white,
+                        color: cs.onSurface,
                       ),
                       SizedBox(width: 8.w),
                       Text(
@@ -87,7 +93,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                         style: GoogleFonts.playfairDisplay(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: cs.onSurface,
                         ),
                       ),
                     ],
@@ -103,7 +109,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                         Icon(
                           Icons.waving_hand_rounded,
                           size: 64.r,
-                          color: Colors.white,
+                          color: cs.onSurface,
                         ),
                         SizedBox(height: 24.h),
                         Text(
@@ -111,7 +117,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: cs.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -120,7 +126,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                           'Start creating with Manus',
                           style: TextStyle(
                             fontSize: 14.sp,
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: cs.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -130,17 +136,19 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                           controller: _controller,
                           keyboardType: TextInputType.emailAddress,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: cs.onSurface,
                             fontSize: 15.sp,
                           ),
                           decoration: InputDecoration(
                             hintText: 'Enter your email address',
                             hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.35),
+                              color: cs.onSurfaceVariant,
                               fontSize: 15.sp,
                             ),
                             filled: true,
-                            fillColor: const Color(0xFF1E1E1E),
+                            fillColor: isDark
+                                ? AppColors.darkSurfaceElevated
+                                : AppColors.lightSurfaceElevated,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
                               borderSide: BorderSide.none,
@@ -159,9 +167,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                             vertical: 14.h,
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.15),
-                            ),
+                            border: Border.all(color: cs.outline),
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Row(
@@ -183,7 +189,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                               Text(
                                 'Success!',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: cs.onSurface,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -201,9 +207,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                     'CLOUDFLARE',
                                     style: TextStyle(
                                       fontSize: 8.sp,
-                                      color: Colors.white.withValues(
-                                        alpha: 0.5,
-                                      ),
+                                      color: cs.onSurfaceVariant,
                                       letterSpacing: 0.5,
                                     ),
                                   ),
@@ -214,31 +218,23 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                           text: 'Privacy',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white.withValues(
-                                              alpha: 0.5,
-                                            ),
-                                            decoration:
-                                                TextDecoration.underline,
+                                            color: cs.onSurfaceVariant,
+                                            decoration: TextDecoration.underline,
                                           ),
                                         ),
                                         TextSpan(
                                           text: ' · ',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white.withValues(
-                                              alpha: 0.3,
-                                            ),
+                                            color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                                           ),
                                         ),
                                         TextSpan(
                                           text: 'Help',
                                           style: TextStyle(
                                             fontSize: 8.sp,
-                                            color: Colors.white.withValues(
-                                              alpha: 0.5,
-                                            ),
-                                            decoration:
-                                                TextDecoration.underline,
+                                            color: cs.onSurfaceVariant,
+                                            decoration: TextDecoration.underline,
                                           ),
                                         ),
                                       ],
@@ -260,8 +256,10 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                             height: 52.h,
                             decoration: BoxDecoration(
                               color: _hasText
-                                  ? const Color(0xFF3A3A3A)
-                                  : const Color(0xFF1E1E1E),
+                                  ? (isDark ? Colors.white : Colors.black)
+                                  : (isDark
+                                        ? AppColors.darkSurfaceElevated
+                                        : AppColors.lightSurfaceElevated),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             alignment: Alignment.center,
@@ -271,8 +269,8 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
                                 color: _hasText
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.35),
+                                    ? (isDark ? Colors.black : Colors.white)
+                                    : cs.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -292,14 +290,14 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                           Icon(
                             Icons.all_inclusive,
                             size: 14.r,
-                            color: Colors.white.withValues(alpha: 0.4),
+                            color: cs.onSurfaceVariant,
                           ),
                           SizedBox(width: 5.w),
                           Text(
                             'from',
                             style: TextStyle(
                               fontSize: 11.sp,
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                           SizedBox(width: 5.w),
@@ -308,7 +306,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color: cs.onSurface,
                             ),
                           ),
                         ],
@@ -317,15 +315,15 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _FooterLink('Terms of service'),
-                          _FooterDot(),
-                          _FooterLink('Privacy policy'),
-                          _FooterDot(),
+                          _FooterLink('Terms of service', cs: cs),
+                          _FooterDot(cs: cs),
+                          _FooterLink('Privacy policy', cs: cs),
+                          _FooterDot(cs: cs),
                           Text(
                             '©2026 Meta',
                             style: TextStyle(
                               fontSize: 11.sp,
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -344,7 +342,8 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
 class _FooterLink extends StatelessWidget {
   final String label;
-  const _FooterLink(this.label);
+  final ColorScheme cs;
+  const _FooterLink(this.label, {required this.cs});
 
   @override
   Widget build(BuildContext context) {
@@ -352,36 +351,42 @@ class _FooterLink extends StatelessWidget {
       label,
       style: TextStyle(
         fontSize: 11.sp,
-        color: Colors.white.withValues(alpha: 0.4),
+        color: cs.onSurfaceVariant,
         decoration: TextDecoration.underline,
-        decorationColor: Colors.white.withValues(alpha: 0.2),
+        decorationColor: cs.outline,
       ),
     );
   }
 }
 
 class _FooterDot extends StatelessWidget {
+  final ColorScheme cs;
+  const _FooterDot({required this.cs});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 6.w),
       child: Text(
         '·',
-        style: TextStyle(
-          fontSize: 11.sp,
-          color: Colors.white.withValues(alpha: 0.2),
-        ),
+        style: TextStyle(fontSize: 11.sp, color: cs.onSurfaceVariant),
       ),
     );
   }
 }
 
 class _SubtleDotPainter extends CustomPainter {
+  final bool isDark;
+  _SubtleDotPainter({required this.isDark});
+
   @override
   void paint(Canvas canvas, Size size) {
     const spacing = 22.0;
     const dotRadius = 1.2;
-    final paint = Paint()..color = Colors.white.withValues(alpha: 0.055);
+    final paint = Paint()
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.055)
+          : Colors.black.withValues(alpha: 0.055);
     for (double y = 0; y < size.height; y += spacing) {
       for (double x = 0; x < size.width; x += spacing) {
         canvas.drawCircle(Offset(x, y), dotRadius, paint);
@@ -390,5 +395,5 @@ class _SubtleDotPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_SubtleDotPainter old) => false;
+  bool shouldRepaint(_SubtleDotPainter old) => old.isDark != isDark;
 }

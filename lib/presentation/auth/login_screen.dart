@@ -6,17 +6,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:manus/router/app_routes.dart';
+import 'package:manus/theme/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: isDark ? AppColors.darkBg : AppColors.lightBg,
       body: Stack(
         children: [
-          const _DotPatternBackground(),
+          _DotPatternBackground(isDark: isDark),
           SafeArea(
             child: Column(
               children: [
@@ -27,7 +31,7 @@ class LoginScreen extends StatelessWidget {
                       Icon(
                             Icons.waving_hand_rounded,
                             size: 64.r,
-                            color: Colors.white,
+                            color: cs.onSurface,
                           )
                           .animate()
                           .fadeIn(duration: 500.ms)
@@ -43,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                         style: GoogleFonts.playfairDisplay(
                           fontSize: 28.sp,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: cs.onSurface,
                         ),
                       ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
                     ],
@@ -93,7 +97,7 @@ class LoginScreen extends StatelessWidget {
                           'assets/logo/apple-logo.png',
                           width: 26.r,
                           height: 26.r,
-                          color: Colors.white,
+                          color: cs.onSurface,
                         ),
                         label: 'Continue with Apple',
                       ),
@@ -102,7 +106,7 @@ class LoginScreen extends StatelessWidget {
                         onTap: () => context.push(AppRoutes.emailLogin),
                         leading: _SocialIcon(
                           icon: Icons.email_outlined,
-                          color: Colors.white,
+                          color: cs.onSurface,
                         ),
                         label: 'Continue with Email',
                       ),
@@ -112,14 +116,14 @@ class LoginScreen extends StatelessWidget {
                           text: 'By continuing, you agree to our ',
                           style: TextStyle(
                             fontSize: 11.sp,
-                            color: Colors.white.withValues(alpha: 0.45),
+                            color: cs.onSurfaceVariant,
                           ),
                           children: [
                             TextSpan(
                               text: 'Terms of Service',
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: Colors.white.withValues(alpha: 0.65),
+                                color: cs.onSurface,
                               ),
                             ),
                             const TextSpan(text: ' and have read our '),
@@ -127,7 +131,7 @@ class LoginScreen extends StatelessWidget {
                               text: 'Privacy Policy',
                               style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: Colors.white.withValues(alpha: 0.65),
+                                color: cs.onSurface,
                               ),
                             ),
                             const TextSpan(text: '. © 2026 Meta'),
@@ -166,22 +170,29 @@ class _AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 60.h,
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
+          color: isDark ? AppColors.darkSurfaceElevated : AppColors.lightSurfaceElevated,
           borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               width: 36.r,
               height: 36.r,
               child: Stack(
                 clipBehavior: Clip.none,
+                alignment: Alignment.center,
                 children: [
                   leading,
                   if (badge != null)
@@ -195,12 +206,15 @@ class _AuthButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        color: cs.onSurface,
+                      ),
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -209,7 +223,7 @@ class _AuthButton extends StatelessWidget {
                       subtitle!,
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: cs.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -219,7 +233,7 @@ class _AuthButton extends StatelessWidget {
             if (subtitle != null)
               Icon(
                 Icons.chevron_right,
-                color: Colors.white.withValues(alpha: 0.4),
+                color: cs.onSurfaceVariant,
                 size: 20.r,
               ),
           ],
@@ -261,13 +275,11 @@ class _SocialIcon extends StatelessWidget {
 class _OrDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
-          child: Divider(
-            color: Colors.white.withValues(alpha: 0.12),
-            height: 1,
-          ),
+          child: Divider(color: cs.outline.withValues(alpha: 0.6), height: 1),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -275,16 +287,13 @@ class _OrDivider extends StatelessWidget {
             'OR',
             style: TextStyle(
               fontSize: 12.sp,
-              color: Colors.white.withValues(alpha: 0.35),
+              color: cs.onSurfaceVariant,
               letterSpacing: 0.5,
             ),
           ),
         ),
         Expanded(
-          child: Divider(
-            color: Colors.white.withValues(alpha: 0.12),
-            height: 1,
-          ),
+          child: Divider(color: cs.outline.withValues(alpha: 0.6), height: 1),
         ),
       ],
     );
@@ -294,15 +303,22 @@ class _OrDivider extends StatelessWidget {
 // ── Dot pattern background ───────────────────────────────────
 
 class _DotPatternBackground extends StatelessWidget {
-  const _DotPatternBackground();
+  final bool isDark;
+  const _DotPatternBackground({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _DotPainter(), size: Size.infinite);
+    return CustomPaint(
+      painter: _DotPainter(isDark: isDark),
+      size: Size.infinite,
+    );
   }
 }
 
 class _DotPainter extends CustomPainter {
+  final bool isDark;
+  _DotPainter({required this.isDark});
+
   @override
   void paint(Canvas canvas, Size size) {
     const spacing = 22.0;
@@ -322,7 +338,9 @@ class _DotPainter extends CustomPainter {
         } else if (r < 0.13 && x > size.width * 0.5) {
           dotColor = const Color(0xFFD44A4A).withValues(alpha: 0.5);
         } else {
-          dotColor = Colors.white.withValues(alpha: 0.06);
+          dotColor = isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.06);
         }
 
         canvas.drawCircle(Offset(x, y), dotRadius, Paint()..color = dotColor);
@@ -331,5 +349,5 @@ class _DotPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_DotPainter old) => false;
+  bool shouldRepaint(_DotPainter old) => old.isDark != isDark;
 }

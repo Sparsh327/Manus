@@ -46,24 +46,22 @@ class StreamingMarkdownView extends StatefulWidget {
 class _StreamingMarkdownViewState extends State<StreamingMarkdownView> {
   MarkdownParser _parser = MarkdownParser.initial();
 
-  // Cache of completed blocks so we never rebuild them — only the active block
-  // and the list tail need rebuilding.
+  // Append-only cache — completed blocks are never removed or re-keyed.
+  // Using _cachedWidgets.length as the loop start guarantees uniqueness even
+  // if the parser momentarily returns fewer completedBlocks than expected.
   final List<_CachedBlockWidget> _cachedWidgets = [];
-  int _lastCompletedCount = 0;
 
   @override
   void didUpdateWidget(StreamingMarkdownView old) {
     super.didUpdateWidget(old);
     if (old.streamingContent != widget.streamingContent) {
       _parser = MarkdownParser.parse(widget.streamingContent);
-      // Append new completed blocks to cache — never touch existing ones.
       final completed = _parser.completedBlocks;
-      for (var i = _lastCompletedCount; i < completed.length; i++) {
+      for (var i = _cachedWidgets.length; i < completed.length; i++) {
         _cachedWidgets.add(
           _CachedBlockWidget(key: ValueKey(i), block: completed[i]),
         );
       }
-      _lastCompletedCount = completed.length;
     }
   }
 

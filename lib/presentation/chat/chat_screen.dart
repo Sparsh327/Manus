@@ -4,10 +4,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:manus/domain/entities/chat_message.dart';
 import 'package:manus/presentation/chat/notifier/chat_notifier.dart';
 import 'package:manus/presentation/chat/notifier/chat_state.dart';
+import 'package:manus/presentation/chat/widgets/attachment_tray.dart';
 import 'package:manus/presentation/chat/widgets/chat_drawer.dart';
+import 'package:manus/presentation/chat/widgets/mode_picker_sheet.dart';
 import 'package:manus/presentation/chat/widgets/streaming_markdown/streaming_markdown_view.dart';
 import 'package:manus/presentation/chat/widgets/suggestion_chips.dart';
 import 'package:manus/presentation/conversations/notifier/conversations_notifier.dart';
@@ -32,6 +35,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool _hasText = false;
   bool _showJumpPill = false;
   bool _pendingScrollJump = false;
+  bool _attachTrayOpen = false;
+  final List<MockAttachmentItem> _attachments = [];
+  ChatMode _currentMode = ChatMode.chat;
 
   bool get _isNearBottom {
     if (!_scrollController.hasClients) return true;
@@ -73,11 +79,39 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   void _sendMessage() {
     final text = _inputController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty && _attachments.isEmpty) return;
     HapticFeedback.lightImpact();
     _inputController.clear();
-    ref.read(chatProvider(widget.conversationId).notifier).sendMessage(text);
+    final sendText = text.isEmpty ? '📎 [Attachment]' : text;
+    setState(() {
+      _attachments.clear();
+      _attachTrayOpen = false;
+    });
+    ref.read(chatProvider(widget.conversationId).notifier).sendMessage(sendText);
     _jumpToBottom();
+  }
+
+  void _toggleAttachTray() {
+    HapticFeedback.selectionClick();
+    setState(() => _attachTrayOpen = !_attachTrayOpen);
+  }
+
+  void _handleAttachSource(AttachSourceType source) {
+    final item = MockAttachmentItem(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      source: source,
+      name: source.label,
+    );
+    setState(() {
+      _attachments.add(item);
+      _attachTrayOpen = false;
+    });
+  }
+
+  Future<void> _openModePicker() async {
+    HapticFeedback.selectionClick();
+    final selected = await showModePickerSheet(context, _currentMode);
+    if (selected != null && mounted) setState(() => _currentMode = selected);
   }
 
   void _stopStream() {
@@ -199,6 +233,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ],
             ),
           ),
+          if (_attachments.isNotEmpty)
+            AttachmentThumbnailRow(
+              attachments: _attachments,
+              onRemove: (id) =>
+                  setState(() => _attachments.removeWhere((a) => a.id == id)),
+            ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: _attachTrayOpen
+                ? AttachmentOptionsTray(
+                    isDark: isDark,
+                    cs: cs,
+                    onSourceTap: _handleAttachSource,
+                  )
+                : const SizedBox.shrink(),
+          ),
           _ChatInputBar(
             containerKey: _inputBarKey,
             controller: _inputController,
@@ -208,6 +259,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             onStop: _stopStream,
             isDark: isDark,
             cs: cs,
+            attachTrayOpen: _attachTrayOpen,
+            onToggleAttachTray: _toggleAttachTray,
+            onOpenModePicker: _openModePicker,
+            currentMode: _currentMode,
+            attachmentCount: _attachments.length,
           ),
         ],
       ),
@@ -507,6 +563,8 @@ class _AssistantMessage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const _ManusHeader(),
+          SizedBox(height: 8.h),
           StaticMarkdownView(content: message.content),
           if (message.isComplete && isLast) ...[
             SizedBox(height: 8.h),
@@ -619,19 +677,27 @@ class _StreamingBubble extends ConsumerWidget {
 
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        switchInCurve: Curves.easeOut,
-        switchOutCurve: Curves.easeIn,
-        transitionBuilder: (child, animation) =>
-            FadeTransition(opacity: animation, child: child),
-        child: content.isEmpty
-            ? const _ThinkingIndicator(key: ValueKey('thinking'))
-            : _StreamingContent(
-                key: const ValueKey('content'),
-                content: content,
-                cs: cs,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const _ManusHeader(),
+          SizedBox(height: 8.h),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+            child: content.isEmpty
+                ? const _ThinkingIndicator(key: ValueKey('thinking'))
+                : _StreamingContent(
+                    key: const ValueKey('content'),
+                    content: content,
+                    cs: cs,
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -667,40 +733,81 @@ class _ThinkingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return SizedBox(
-      height: 26.h,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(
-          3,
-          (i) => Container(
-            margin: EdgeInsets.only(right: 5.w),
-            width: 8.r,
-            height: 8.r,
-            decoration: BoxDecoration(
-              color: cs.onSurfaceVariant,
-              shape: BoxShape.circle,
-            ),
-          )
-              .animate(onPlay: (c) => c.repeat())
-              .scaleXY(
-                begin: 0.4,
-                end: 1.0,
-                duration: 460.ms,
-                delay: (i * 160).ms,
-                curve: Curves.easeInOut,
-              )
-              .then()
-              .scaleXY(
-                begin: 1.0,
-                end: 0.4,
-                duration: 460.ms,
-                curve: Curves.easeInOut,
-              ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 8.r,
+          height: 8.r,
+          decoration: const BoxDecoration(
+            color: Color(0xFF3B82F6),
+            shape: BoxShape.circle,
+          ),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scaleXY(
+              begin: 0.55,
+              end: 1.0,
+              duration: 850.ms,
+              curve: Curves.easeInOut,
+            )
+            .fadeIn(begin: 0.4, duration: 850.ms),
+        SizedBox(width: 8.w),
+        Text(
+          'Thinking',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: cs.onSurfaceVariant,
+          ),
         ),
-      ),
-    ).animate().fadeIn(duration: 180.ms);
+      ],
+    ).animate().fadeIn(duration: 200.ms);
+  }
+}
+
+// ── Manus branding header — shown above every assistant message ───
+
+class _ManusHeader extends StatelessWidget {
+  const _ManusHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('🤌', style: TextStyle(fontSize: 17.sp)),
+        SizedBox(width: 6.w),
+        Text(
+          'manus',
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w700,
+            color: cs.onSurface,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: cs.outline.withValues(alpha: 0.35),
+            ),
+            borderRadius: BorderRadius.circular(6.r),
+          ),
+          child: Text(
+            'Lite',
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -820,6 +927,11 @@ class _ChatInputBar extends StatelessWidget {
   final VoidCallback onStop;
   final bool isDark;
   final ColorScheme cs;
+  final bool attachTrayOpen;
+  final VoidCallback onToggleAttachTray;
+  final VoidCallback onOpenModePicker;
+  final ChatMode currentMode;
+  final int attachmentCount;
 
   const _ChatInputBar({
     required this.containerKey,
@@ -830,6 +942,11 @@ class _ChatInputBar extends StatelessWidget {
     required this.onStop,
     required this.isDark,
     required this.cs,
+    required this.attachTrayOpen,
+    required this.onToggleAttachTray,
+    required this.onOpenModePicker,
+    required this.currentMode,
+    required this.attachmentCount,
   });
 
   @override
@@ -873,12 +990,39 @@ class _ChatInputBar extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(8.w, 4.h, 8.w, 8.h),
               child: Row(
                 children: [
-                  _BarIconButton(icon: Icons.add, onTap: () {}, cs: cs),
+                  GestureDetector(
+                    onTap: onToggleAttachTray,
+                    child: Padding(
+                      padding: EdgeInsets.all(6.r),
+                      child: AnimatedRotation(
+                        turns: attachTrayOpen ? 0.125 : 0.0,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                        child: Icon(
+                          Icons.add,
+                          size: 22.r,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(width: 4.w),
-                  _BarIconButton(
-                    icon: Icons.electrical_services_outlined,
-                    onTap: () {},
-                    cs: cs,
+                  GestureDetector(
+                    onTap: onOpenModePicker,
+                    child: Padding(
+                      padding: EdgeInsets.all(6.r),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        transitionBuilder: (child, animation) =>
+                            ScaleTransition(scale: animation, child: child),
+                        child: Icon(
+                          currentMode.icon,
+                          key: ValueKey(currentMode),
+                          size: 22.r,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
                   ),
                   const Spacer(),
                   _BarIconButton(
@@ -893,6 +1037,7 @@ class _ChatInputBar extends StatelessWidget {
                     onSend: onSend,
                     onStop: onStop,
                     isDark: isDark,
+                    attachmentCount: attachmentCount,
                   ),
                 ],
               ),
@@ -933,6 +1078,7 @@ class _SendStopButton extends StatelessWidget {
   final VoidCallback onSend;
   final VoidCallback onStop;
   final bool isDark;
+  final int attachmentCount;
 
   const _SendStopButton({
     required this.hasText,
@@ -940,11 +1086,12 @@ class _SendStopButton extends StatelessWidget {
     required this.onSend,
     required this.onStop,
     required this.isDark,
+    this.attachmentCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    final active = hasText || isStreaming;
+    final active = hasText || isStreaming || attachmentCount > 0;
     final bg = active
         ? (isDark ? Colors.white : Colors.black)
         : (isDark
@@ -954,25 +1101,53 @@ class _SendStopButton extends StatelessWidget {
         ? (isDark ? Colors.black : Colors.white)
         : (isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary);
 
-    return GestureDetector(
-      onTap: isStreaming ? onStop : (hasText ? onSend : null),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 36.r,
-        height: 36.r,
-        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          transitionBuilder: (child, animation) =>
-              ScaleTransition(scale: animation, child: child),
-          child: Icon(
-            isStreaming ? Icons.stop_rounded : Icons.arrow_upward_rounded,
-            key: ValueKey(isStreaming),
-            size: 20.r,
-            color: fg,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector(
+          onTap: isStreaming ? onStop : (active ? onSend : null),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: 36.r,
+            height: 36.r,
+            decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                isStreaming ? Icons.stop_rounded : Icons.arrow_upward_rounded,
+                key: ValueKey(isStreaming),
+                size: 20.r,
+                color: fg,
+              ),
+            ),
           ),
         ),
-      ),
+        if (attachmentCount > 0 && !isStreaming)
+          Positioned(
+            top: -4.r,
+            right: -4.r,
+            child: Container(
+              width: 16.r,
+              height: 16.r,
+              decoration: const BoxDecoration(
+                color: AppColors.accent,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  '$attachmentCount',
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

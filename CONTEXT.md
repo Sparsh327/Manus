@@ -7,23 +7,28 @@
 ## 1. PROJECT OVERVIEW
 
 ### Mission Statement
+
 Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agentic interface — in 5 days. The bar is:
+
 - Animation polish indistinguishable from the original
 - Edge-case mastery
 - Frontend craftsmanship where a non-technical person cannot tell which app is the clone
 
 ### Evaluation Philosophy
+
 - **Polish > coverage**: A perfectly polished UI with basic working chat beats a feature-complete janky app
 - Evaluators measure: what you finish well, what you skip, how you communicate trade-offs
 - The bar is CRED / Linear / Arc level UI quality
 - Ship something that can hold up next to Manus on a real device
 
 ### Reference Apps (Source of Truth — NO Figma)
+
 - **iOS:** Manus AI App Store link (install and use daily)
 - **Android:** Manus Play Store link (install and use daily)
 - The live app IS the design spec. Take screen recordings. Step through animations frame by frame. Measure spacing with screenshots and a ruler tool.
 
 ### Backend
+
 - Use **Google Gemini API** (gemini-2.5-flash, free tier)
 - Can use your own free key or request one
 - Functionality = working text chat with streaming
@@ -38,12 +43,14 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** Animated logo intro matching Manus' launch sequence.
 
 **Requirements:**
+
 - Animate the Manus-style logo intro
 - Match gradient and timing exactly
 - Match every easing curve from the live app
 - No static logo — must be animated sequence
 
 **Key Details:**
+
 - This is the first impression — get the timing perfect
 - Reference the live app's launch by recording it and stepping frame by frame
 
@@ -54,6 +61,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** First-run walkthrough for new users.
 
 **Requirements:**
+
 - 3 slides total
 - Page transitions: match exactly from live app
 - Animated illustrations on each slide
@@ -62,6 +70,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - Match every easing curve
 
 **Key Details:**
+
 - Illustrations must animate in, not just appear
 - The swipe gesture between slides must feel exactly like Manus
 - The indicator dots must animate between states with spring physics
@@ -73,6 +82,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** User authentication.
 
 **Requirements:**
+
 - **Email** sign-in/up field
 - **Google** sign-in button
 - **Apple** sign-in button
@@ -81,6 +91,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - **Success transition**: smooth animated transition to home after successful auth
 
 **Key Details:**
+
 - Keyboard avoidance is tested on iOS notched devices, Android gesture-nav devices, and Android software nav bar devices
 - The shake animation must feel snappy, not linear
 - Error states must be inline, not dialog-based
@@ -92,6 +103,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** Empty state — starting point for a new conversation.
 
 **Requirements:**
+
 - Empty state design with animated suggestion chips
 - Prompt example text/UI
 - **Model picker pill** — a pill-shaped selector to choose the AI model
@@ -100,6 +112,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - Tapping a chip animates it into the input field — do not just dump text, animate it
 
 **Key Details:**
+
 - The home screen's suggestion chips are the most important animation on this screen
 - The model picker pill has icon morphs
 - This screen transitions into active chat seamlessly
@@ -113,12 +126,14 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Requirements:**
 
 #### Message Bubbles
+
 - User messages: right-aligned bubble
 - Assistant messages: left-aligned, no bubble background (or distinct style matching Manus)
 - **Bubble entrance:** spring scale + fade; stagger if multiple appear at once
 - **Streaming caret/pulse** on the active assistant bubble while streaming
 
 #### Streaming Markdown (Critical — See Difficult Scenarios)
+
 - Render markdown token-by-token without rebuild jank
 - Supported: bold, italics, lists, inline code, fenced code blocks, tables, blockquotes, links
 - Must NOT reflow the entire bubble on every token
@@ -126,6 +141,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - The bubble must grow smoothly, scroll position stays pinned to bottom
 
 #### Code Blocks
+
 - Language label: top-left
 - Copy button: top-right with **success state animation** (checkmark morph + subtle haptic + 1.5s revert)
 - Horizontal scroll for long lines (no wrapping)
@@ -134,6 +150,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - Must render correctly while surrounding message is still streaming
 
 #### Tool-Call / Reasoning Collapsibles
+
 - Expandable "thinking..." sections inline with messages
 - While in-progress: animated indicator
 - When complete: collapses to one-line summary the user can re-expand
@@ -141,11 +158,13 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - Must NOT shift scroll position unexpectedly
 
 #### Message Actions
+
 - Long-press to start text selection (even on streaming messages)
 - Copy any message to clipboard
 - Copy must work for selected portion only
 
 #### Inline Images
+
 - Images render inline within the message stream
 
 ---
@@ -155,6 +174,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** Side-drawer showing all past conversations.
 
 **Requirements:**
+
 - Opens from left side (or hamburger) — spring physics matching iOS sheet
 - Grouped history sections:
   - Today
@@ -174,10 +194,12 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 - The underlying chat behind the drawer remains **pixel-stable** (no flicker, no rebuild)
 
 **Spring Physics:**
+
 - Drawer open/close must use spring physics matching iOS sheet — damped reveals over snap appearances
 - Even on Android, this must feel like iOS sheet physics
 
 **Long-press Context Menu:**
+
 - iOS-style scale + blur background
 - The menu must feel like a native context menu, not a bottom sheet
 
@@ -188,6 +210,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** Bottom sheet for picking between modes.
 
 **Requirements:**
+
 - Modes available: Chat / Agent / Browse / Image / etc.
 - **Icon morphs** between modes (not crossfade — actual morph)
 - **Chip animations** when selecting
@@ -201,6 +224,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 **Purpose:** Allows attaching media/files to messages.
 
 **Requirements:**
+
 - Buttons: Camera, Photo library, File picker, Screen capture
 - **Animated reveal** from the input bar (not a sudden appearance)
 - Selected images show as **thumbnails with remove buttons**
@@ -214,6 +238,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 ### 2.9 Settings Screen
 
 **Requirements:**
+
 - Profile section
 - Model selection
 - Appearance: Light / Dark / System toggle
@@ -226,6 +251,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 ### 2.10 Subscription / Paywall Screen
 
 **Requirements:**
+
 - Plans display
 - Price toggle: Monthly / Yearly
 - Feature comparison table
@@ -237,6 +263,7 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 ### 2.11 Empty / Error / Offline States
 
 **Requirements:**
+
 - Custom illustrations (not generic Material icons) for:
   - No history
   - No internet / offline
@@ -252,16 +279,16 @@ Build a **pixel-perfect clone of the Manus AI Agent app** — a chat-first agent
 
 These are the functional requirements (not just UI):
 
-| Feature | Details |
-|---|---|
-| Send prompt → streamed response | Gemini API, streaming via Dio with CancelToken |
-| Stop / Cancel stream | Mid-response cancellation — network request actually cancelled (Dio CancelToken), partial message preserved with "stopped" badge |
-| Regenerate last message | Re-run the last assistant response |
-| Edit user message | Edit a previous user message and re-run from that point (fork from edit point) |
-| Copy any message | Clipboard copy with haptic feedback |
-| Persist conversations | Hive or Isar — conversations survive app restart |
-| Drawer history list | **Reflects local storage** with grouped sections (Today / Yesterday / Previous 7 / Older) — grouped from local DB, not a remote API call |
-| Long-press chat row | Context menu: Rename, Pin, Archive, Delete (with confirmation) |
+| Feature                         | Details                                                                                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Send prompt → streamed response | Gemini API, streaming via Dio with CancelToken                                                                                           |
+| Stop / Cancel stream            | Mid-response cancellation — network request actually cancelled (Dio CancelToken), partial message preserved with "stopped" badge         |
+| Regenerate last message         | Re-run the last assistant response                                                                                                       |
+| Edit user message               | Edit a previous user message and re-run from that point (fork from edit point)                                                           |
+| Copy any message                | Clipboard copy with haptic feedback                                                                                                      |
+| Persist conversations           | Hive or Isar — conversations survive app restart                                                                                         |
+| Drawer history list             | **Reflects local storage** with grouped sections (Today / Yesterday / Previous 7 / Older) — grouped from local DB, not a remote API call |
+| Long-press chat row             | Context menu: Rename, Pin, Archive, Delete (with confirmation)                                                                           |
 
 ---
 
@@ -276,6 +303,7 @@ These are the hard problems. Every one of these will be tested.
 **Problem:** Naive `Markdown(body: fullText)` rebuilds the entire widget tree on every token. On a 200-token stream this causes jank.
 
 **Solution Required:**
+
 - **Block-level segmentation**: parse the markdown into blocks (paragraph, code fence, list, etc.) as tokens arrive
 - **Per-block memoization**: each block is a separate widget that only rebuilds when its own content changes
 - Completed blocks above the current streaming block must NEVER rebuild
@@ -288,6 +316,7 @@ These are the hard problems. Every one of these will be tested.
 ### 4.2 Sticky-Bottom Auto-Scroll (Smart Scroll)
 
 **Rules:**
+
 - While stream is active AND user is at bottom → auto-scroll on every new token
 - User scrolls up even 1px → auto-scroll RELEASES
 - User scrolls back within ~40px of bottom → auto-scroll RE-ENGAGES seamlessly
@@ -299,6 +328,7 @@ These are the hard problems. Every one of these will be tested.
 ### 4.3 Code Blocks — Horizontal Scroll, Copy, Language Label
 
 **Requirements:**
+
 - Language label: top-left of code block
 - Copy button: top-right
   - On copy success: checkmark morph animation
@@ -314,6 +344,7 @@ These are the hard problems. Every one of these will be tested.
 ### 4.4 Tool-Call / Reasoning Collapsibles
 
 **Requirements:**
+
 - Inline with message stream (not after)
 - While tool-call is in progress: animated loading indicator inside the collapsible
 - When complete: auto-collapses to one-line summary
@@ -328,6 +359,7 @@ These are the hard problems. Every one of these will be tested.
 This is tested on multiple device classes. Requirements:
 
 **(a) Keyboard raises perfectly:**
+
 - No gap between keyboard and input bar
 - No overlap of keyboard over input bar
 - Tested on:
@@ -336,24 +368,27 @@ This is tested on multiple device classes. Requirements:
   - Android software nav bar devices (Pixel 4a, Samsung A series)
 
 **(b) Input bar height:**
+
 - Animates height when user types multiline (max 6 lines, then inside scroll)
 
 **(c) Send button:**
+
 - Enabled/disabled state syncs with input content AND streaming state
 - While streaming: button shows stop icon (paper plane → spinner → stop icon → paper plane morph)
 - **Send button morph**: paper plane → spinner → stop icon and back — morphed, NOT crossfaded
 
 **(d) Focus:**
+
 - Must NOT lose focus when model picker sheet opens
 
 ---
 
 ### 4.6 iOS vs Android Font Rendering
 
-| Platform | Body | Headings | Monospace |
-|---|---|---|---|
-| iOS | SF Pro (CupertinoSystemText / SystemFontOverride) | SF Pro Display | SF Mono |
-| Android | Inter | Inter | JetBrains Mono or Roboto Mono |
+| Platform | Body                                              | Headings       | Monospace                     |
+| -------- | ------------------------------------------------- | -------------- | ----------------------------- |
+| iOS      | SF Pro (CupertinoSystemText / SystemFontOverride) | SF Pro Display | SF Mono                       |
+| Android  | Inter                                             | Inter          | JetBrains Mono or Roboto Mono |
 
 > **WARNING:** "Inter on iOS is the most common shortcut and the most obvious tell that an app is a poor clone." Using Inter on iOS = immediate fail.
 
@@ -364,6 +399,7 @@ This is tested on multiple device classes. Requirements:
 ### 4.7 Stream Cancellation That Actually Cancels
 
 When user taps Stop:
+
 - (a) **Network request is cancelled** — Dio CancelToken is actually invoked
 - (b) **Partial assistant message is preserved** with a "stopped" badge
 - (c) **UI returns to idle state in under 100 ms**
@@ -377,6 +413,7 @@ When user taps Stop:
 **Scenario:** User backgrounds the app mid-stream.
 
 **Requirements:**
+
 - On iOS: stream may be killed by OS → detect this → show "stream interrupted, tap to retry" inline action
 - If user returns within a few seconds AND stream is still alive → resume rendering without duplicating tokens
 - Test: airplane-mode toggle, incoming call, **screen lock**
@@ -388,6 +425,7 @@ When user taps Stop:
 **Target:** 200-message conversation must scroll at 60 fps.
 
 **Requirements:**
+
 - Use `ListView.builder` with stable keys
 - Cache rendered markdown for stable messages
 - Never rebuild messages above the visible window when a new token arrives at the bottom
@@ -398,6 +436,7 @@ When user taps Stop:
 ### 4.10 Drawer Animation and Chat History List
 
 **Drawer:**
+
 - Spring physics matching Manus (damped, not snap)
 - History list must support:
   - Pull-to-refresh
@@ -422,13 +461,13 @@ When user taps Stop:
 
 ### 4.12 Haptics (Critical for Android Go-class Devices)
 
-| Action | Haptic |
-|---|---|
-| Send message | Light impact |
-| Selection feedback on chip taps | Selection feedback |
-| Copy success | Success notification |
-| Send while empty (tapping send with no input) | **Warning haptic** |
-| System haptics disabled | Fall back gracefully |
+| Action                                        | Haptic               |
+| --------------------------------------------- | -------------------- |
+| Send message                                  | Light impact         |
+| Selection feedback on chip taps               | Selection feedback   |
+| Copy success                                  | Success notification |
+| Send while empty (tapping send with no input) | **Warning haptic**   |
+| System haptics disabled                       | Fall back gracefully |
 
 **iOS:** Must use `UIImpactFeedbackGenerator`-style prepare() pattern — first hap must not be delayed.
 
@@ -470,7 +509,7 @@ When user taps Stop:
 - 3–4 chips, stagger animate in (60 ms between chips, easeOutCubic, slight Y translation)
 - Tapping a chip: **animates it into the input field** — the chip flies/morphs into the input — do not just paste text
 
-> **Evaluator Weight Signal:** *"This single animation says more about you than any test suite."* — The chip-tap-to-input animation is weighted extremely heavily. It is the single most revealing animation in the assignment.
+> **Evaluator Weight Signal:** _"This single animation says more about you than any test suite."_ — The chip-tap-to-input animation is weighted extremely heavily. It is the single most revealing animation in the assignment.
 
 ---
 
@@ -506,16 +545,17 @@ When user taps Stop:
 ## 5. DESIGN GUIDELINES
 
 ### 5.1 Source of Truth
+
 There is NO Figma file. The Manus app on the App Store and Play Store IS the source of truth. Install it, run it on the same device class, reference it constantly. Take screen recordings. Step through animations frame by frame. Measure spacing with screenshots and a ruler tool.
 
 ---
 
 ### 5.2 Typography
 
-| Platform | Body | Headings | Monospace |
-|---|---|---|---|
-| iOS | SF Pro (CupertinoSystemText / SystemFontOverride) | SF Pro Display | SF Mono |
-| Android | Inter | Inter | JetBrains Mono or Roboto Mono |
+| Platform | Body                                              | Headings       | Monospace                     |
+| -------- | ------------------------------------------------- | -------------- | ----------------------------- |
+| iOS      | SF Pro (CupertinoSystemText / SystemFontOverride) | SF Pro Display | SF Mono                       |
+| Android  | Inter                                             | Inter          | JetBrains Mono or Roboto Mono |
 
 > **Critical:** Inter on iOS = immediate rejection. Test on real iPhone.
 
@@ -540,21 +580,23 @@ There is NO Figma file. The Manus app on the App Store and Play Store IS the sou
 
 ### 5.5 Responsiveness
 
-| Device Class | Must Look Correct On |
-|---|---|
-| Small Android | Pixel 4a / 5a, Samsung A series — 360 dp width, software nav bar |
-| Standard Android | Pixel 7 / 8, Samsung S23 — 412 dp width, gesture nav |
-| Large Android | Pixel 8 Pro / Fold outer screen — 412 dp tall |
-| Standard iPhone | iPhone 13 / 14 / 15 — 390 dp width, notch / Dynamic Island |
-| Large iPhone | iPhone 15 Pro Max — 430 dp width |
-| Small iPhone | iPhone 13 mini / SE — 375 dp / 320 dp — **DO NOT skip this** |
+| Device Class     | Must Look Correct On                                             |
+| ---------------- | ---------------------------------------------------------------- |
+| Small Android    | Pixel 4a / 5a, Samsung A series — 360 dp width, software nav bar |
+| Standard Android | Pixel 7 / 8, Samsung S23 — 412 dp width, gesture nav             |
+| Large Android    | Pixel 8 Pro / Fold outer screen — 412 dp tall                    |
+| Standard iPhone  | iPhone 13 / 14 / 15 — 390 dp width, notch / Dynamic Island       |
+| Large iPhone     | iPhone 15 Pro Max — 430 dp width                                 |
+| Small iPhone     | iPhone 13 mini / SE — 375 dp / 320 dp — **DO NOT skip this**     |
 
 ---
 
 ## 6. ANIMATION REQUIREMENTS
 
 ### Philosophy
+
 Animation separates a good Flutter app from a Manus-class one. We are looking for CRED-level / Linear-level / Arc-level polish. Every transition must feel intentional.
+
 - **Spring physics over linear curves**
 - **Damped reveals** over snap appearances
 - **Small overshoots** where playful
@@ -565,40 +607,40 @@ Animation separates a good Flutter app from a Manus-class one. We are looking fo
 
 ### Required Animations (Non-Exhaustive)
 
-| Animation | Spec |
-|---|---|
-| Bubble entrance | Spring scale + fade; stagger if multiple appear at once |
-| Streaming caret | Pulse on active assistant bubble while streaming |
-| Send button morph | Paper plane → spinner → stop icon → paper plane; all morphed, never crossfaded |
-| Drawer open/close | Spring physics matching iOS sheet; damped reveals over snap; works on Android too |
-| Mode picker icon morph | Input pill icon morphs on mode change — not a crossfade |
-| Suggestion chips stagger | 60 ms between chips, easeOutCubic, Y translation; **animate INTO input field on tap** (not paste) |
-| Code-block copy success | Checkmark morph + subtle haptic + 1.5 s revert |
-| Tool-call expand/collapse | Size + opacity spring; never hard reveal; must not shift scroll |
-| Long-press context menu | **iOS-style scale + blur background, even on Android** |
-| Theme switch | **200 ms cross-fade across ALL themed widgets** — never hard cut |
-| Page transitions | **Cupertino on iOS, custom shared-axis on Android** |
-| Pull-to-refresh indicator | **Custom indicator matching app personality — NOT the default spinner** |
-| "Jump to latest" pill | Fade in/out with animation — never snaps |
-| Error shake | Auth form shakes on login failure — snappy, not linear |
-| Attachment tray reveal | Animated reveal upward from input bar — not sudden appearance |
-| Onboarding illustrations | Animate in per slide — not static appear |
-| Onboarding page indicator | Dots animate between states with spring physics |
-| Success transition | Smooth animated transition from auth to home |
+| Animation                 | Spec                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| Bubble entrance           | Spring scale + fade; stagger if multiple appear at once                                           |
+| Streaming caret           | Pulse on active assistant bubble while streaming                                                  |
+| Send button morph         | Paper plane → spinner → stop icon → paper plane; all morphed, never crossfaded                    |
+| Drawer open/close         | Spring physics matching iOS sheet; damped reveals over snap; works on Android too                 |
+| Mode picker icon morph    | Input pill icon morphs on mode change — not a crossfade                                           |
+| Suggestion chips stagger  | 60 ms between chips, easeOutCubic, Y translation; **animate INTO input field on tap** (not paste) |
+| Code-block copy success   | Checkmark morph + subtle haptic + 1.5 s revert                                                    |
+| Tool-call expand/collapse | Size + opacity spring; never hard reveal; must not shift scroll                                   |
+| Long-press context menu   | **iOS-style scale + blur background, even on Android**                                            |
+| Theme switch              | **200 ms cross-fade across ALL themed widgets** — never hard cut                                  |
+| Page transitions          | **Cupertino on iOS, custom shared-axis on Android**                                               |
+| Pull-to-refresh indicator | **Custom indicator matching app personality — NOT the default spinner**                           |
+| "Jump to latest" pill     | Fade in/out with animation — never snaps                                                          |
+| Error shake               | Auth form shakes on login failure — snappy, not linear                                            |
+| Attachment tray reveal    | Animated reveal upward from input bar — not sudden appearance                                     |
+| Onboarding illustrations  | Animate in per slide — not static appear                                                          |
+| Onboarding page indicator | Dots animate between states with spring physics                                                   |
+| Success transition        | Smooth animated transition from auth to home                                                      |
 
 ---
 
 ## 7. PERFORMANCE TARGETS
 
-| Metric | Target | How Measured |
-|---|---|---|
-| Frame rate (steady) | 60 fps minimum | Flutter DevTools Performance overlay during 200-msg stream |
-| Frame rate (worst case) | No frames > 16 ms — 99% of the time | Performance overlay + raster timeline |
-| Cold start (release build) | < 2.5 s on Pixel 6, < 2.0 s on iPhone 13 | Stopwatch from icon tap to interactive home |
-| Time to first token | < 800 ms after send tap | In-app logged metric |
-| Scroll jank | Zero dropped frames scrolling 200-message conversation | DevTools |
-| Memory | < 250 MB RSS after 200-message conversation with 5 images | Xcode Instruments / Android Studio Profiler |
-| APK size | < 35 MB universal release APK | `flutter build apk --release` |
+| Metric                     | Target                                                    | How Measured                                               |
+| -------------------------- | --------------------------------------------------------- | ---------------------------------------------------------- |
+| Frame rate (steady)        | 60 fps minimum                                            | Flutter DevTools Performance overlay during 200-msg stream |
+| Frame rate (worst case)    | No frames > 16 ms — 99% of the time                       | Performance overlay + raster timeline                      |
+| Cold start (release build) | < 2.5 s on Pixel 6, < 2.0 s on iPhone 13                  | Stopwatch from icon tap to interactive home                |
+| Time to first token        | < 800 ms after send tap                                   | In-app logged metric                                       |
+| Scroll jank                | Zero dropped frames scrolling 200-message conversation    | DevTools                                                   |
+| Memory                     | < 250 MB RSS after 200-message conversation with 5 images | Xcode Instruments / Android Studio Profiler                |
+| APK size                   | < 35 MB universal release APK                             | `flutter build apk --release`                              |
 
 ---
 
@@ -606,17 +648,17 @@ Animation separates a good Flutter app from a Manus-class one. We are looking fo
 
 ### 8.1 Required Stack
 
-| Category | Required | Notes |
-|---|---|---|
-| Flutter | 3.35+ | Latest stable. Dart 3.4+ |
-| State management | flutter_riverpod (Notifier / AsyncNotifier API) | No StateNotifier in new code. No riverpod_generator codegen. |
-| Routing | go_router | Typed routes. No Navigator.push. |
-| Networking | dio with CancelToken | For Gemini streaming. Cancellation must work. |
-| Local storage | hive OR isar | Your choice. Conversations persist across restarts. |
-| Image caching | cached_network_image with cacheWidth/cacheHeight | Always pass cache dims to network images. |
-| Markdown | flutter_markdown OR markdown + custom renderer | Custom renderer strongly preferred for streaming perf. |
-| Animations | flutter_animate / rive / custom | Use what fits each animation. Document choices. |
-| LLM API | Google Gemini (free tier — gemini-2.5-flash) | Use your own free key or request one. |
+| Category         | Required                                         | Notes                                                        |
+| ---------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| Flutter          | 3.35+                                            | Latest stable. Dart 3.4+                                     |
+| State management | flutter_riverpod (Notifier / AsyncNotifier API)  | No StateNotifier in new code. No riverpod_generator codegen. |
+| Routing          | go_router                                        | Typed routes. No Navigator.push.                             |
+| Networking       | dio with CancelToken                             | For Gemini streaming. Cancellation must work.                |
+| Local storage    | hive OR isar                                     | Your choice. Conversations persist across restarts.          |
+| Image caching    | cached_network_image with cacheWidth/cacheHeight | Always pass cache dims to network images.                    |
+| Markdown         | flutter_markdown OR markdown + custom renderer   | Custom renderer strongly preferred for streaming perf.       |
+| Animations       | flutter_animate / rive / custom                  | Use what fits each animation. Document choices.              |
+| LLM API          | Google Gemini (free tier — gemini-2.5-flash)     | Use your own free key or request one.                        |
 
 ---
 
@@ -646,12 +688,12 @@ Animation separates a good Flutter app from a Manus-class one. We are looking fo
 
 ### Deliverables
 
-| Deliverable | Required |
-|---|---|
-| GitHub repo (private, access granted) | ✅ Yes |
-| Release-signed Android APK | ✅ Yes |
-| iOS build via TestFlight or .ipa | Bonus |
-| Demo video (5–7 minutes) | ✅ Yes |
+| Deliverable                           | Required |
+| ------------------------------------- | -------- |
+| GitHub repo (private, access granted) | ✅ Yes   |
+| Release-signed Android APK            | ✅ Yes   |
+| iOS build via TestFlight or .ipa      | Bonus    |
+| Demo video (5–7 minutes)              | ✅ Yes   |
 
 ---
 
@@ -694,6 +736,7 @@ Animation separates a good Flutter app from a Manus-class one. We are looking fo
 ## 11. USER FLOWS
 
 ### 11.1 First Launch Flow
+
 ```
 App launch
   → Splash Screen (animated logo, gradient, spring timing)
@@ -706,6 +749,7 @@ App launch
 ```
 
 ### 11.2 Auth Flow
+
 ```
 Auth Screen
   → Enter email / tap Google / tap Apple
@@ -714,6 +758,7 @@ Auth Screen
 ```
 
 ### 11.3 New Chat Flow
+
 ```
 Home / New Chat (empty state)
   → Suggestion chips stagger in (60ms, easeOutCubic, Y translate)
@@ -726,6 +771,7 @@ Home / New Chat (empty state)
 ```
 
 ### 11.4 Stop Stream Flow
+
 ```
 Stream active
   → User taps Stop (stop icon in send button position)
@@ -737,6 +783,7 @@ Stream active
 ```
 
 ### 11.5 Edit Message Flow
+
 ```
 Active conversation
   → User taps/long-presses a previous user message
@@ -747,6 +794,7 @@ Active conversation
 ```
 
 ### 11.6 Drawer Flow
+
 ```
 Home / Chat → tap hamburger or swipe from left edge
   → Drawer slides in with spring physics (damped)
@@ -759,6 +807,7 @@ Home / Chat → tap hamburger or swipe from left edge
 ```
 
 ### 11.7 Theme Switch Flow
+
 ```
 Any screen → Settings → Appearance
   → Toggle Light / Dark / System
@@ -767,6 +816,7 @@ Any screen → Settings → Appearance
 ```
 
 ### 11.8 Network Error / Retry Flow
+
 ```
 Stream active
   → Network drops
@@ -778,6 +828,7 @@ Stream active
 ```
 
 ### 11.9 Attachment Flow
+
 ```
 Input bar → tap paperclip
   → Attachment row animates open above input bar
@@ -794,54 +845,65 @@ Input bar → tap paperclip
 ## 12. EDGE CASES & IMPORTANT NOTES
 
 ### Streaming
+
 - If app is backgrounded mid-stream on iOS, the stream may be OS-killed → detect and show "stream interrupted, tap to retry"
 - If user returns quickly and stream is still alive → resume without duplicating tokens
 - Cancellation must be verified — Dio CancelToken must actually cancel the HTTP request
 
 ### Markdown
+
 - The hardest engineering problem in the assignment
 - Block-level segmentation is mandatory — per-block memoization is mandatory
 - Tables, code blocks, and lists must all stream correctly without jank
 
 ### Scroll
+
 - The "sticky-bottom auto-scroll with release" behavior is explicitly tested
 - The "Jump to latest" pill fade-in/fade-out is explicitly tested
 
 ### Fonts
+
 - The single most common clone failure is Inter on iOS
 - Must use CupertinoSystemText or SystemFontOverride for SF Pro on iOS
 - Test on real iPhone — simulator lies
 
 ### Selection During Streaming
+
 - Genuinely hard — Flutter's SelectableText fights rebuilds
 - Must not lose selection when new tokens arrive
 - Long-press must work on a currently-streaming message
 
 ### Pull-to-Refresh
+
 - In drawer: enabled
 - In chat view: DISABLED (prevents breaking active streams)
 - iOS elastic overscroll: still works in chat, just doesn't trigger refresh
 
 ### Error States
+
 - Never use dialogs or alerts for API/network errors
 - Always inline, always with retry
 - Snackbars only for ephemeral confirms (undo delete)
 
 ### Accessibility
+
 - All interactive elements must have Semantics labels
 - 200% font scale must not break layout
 - 48×48 dp minimum tap targets
 
 ### Haptics
+
 - Prepare haptics before they're needed (iOS pattern)
 - First haptic must not be delayed
 - Graceful degradation when haptics disabled on Android
 
 ### Keyboard
+
 - Test on 3 device types: iOS notched, Android gesture-nav, Android software nav bar
 - No gap, no overlap between keyboard and input bar
 
 ### Conversation Persistence
+
 - Conversations must survive app restart
 - Use Hive or Isar — your choice
 - Drawer must reflect persisted conversations on relaunch
@@ -865,9 +927,10 @@ Input bar → tap paperclip
 
 ## 14. EVALUATOR'S CLOSING STATEMENT (Verbatim Weight Signal)
 
-> *"We know this is a lot for five days. We are measuring what you finish well, what you choose to skip, how honestly you communicate trade-offs, and whether the parts you do ship feel like they belong in a shipping app on a real user's phone. Build something that makes us say 'wow.' Good luck."*
+> _"We know this is a lot for five days. We are measuring what you finish well, what you choose to skip, how honestly you communicate trade-offs, and whether the parts you do ship feel like they belong in a shipping app on a real user's phone. Build something that makes us say 'wow.' Good luck."_
 
 **What this means for development priorities:**
+
 - Communicate trade-offs honestly in your README — if you skipped something, say why
 - Partial but polished > complete but janky
 - Every screen you ship must feel production-ready, not prototype-quality
@@ -875,4 +938,4 @@ Input bar → tap paperclip
 
 ---
 
-*End of CONTEXT.md*
+_End of CONTEXT.md_

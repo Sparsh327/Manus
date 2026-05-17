@@ -36,8 +36,7 @@ class GeminiService {
 
   // API key is injected via --dart-define-from-file=.env
   // Never hardcoded, never committed.
-  static const _apiKey = "AIzaSyBjUmhb2N7k63_mWG0hZ1RnN_loS6eV9i4";
-  // String.fromEnvironment('GEMINI_API_KEY');
+  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
 
   GeminiService({required Dio dio, required Talker talker})
     : _dio = dio,

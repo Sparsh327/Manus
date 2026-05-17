@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:manus/presentation/theme/notifier/theme_notifier.dart';
 import 'package:manus/router/app_routes.dart';
 import 'package:manus/theme/app_colors.dart';
 import 'package:manus/theme/app_text_styles.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -163,6 +166,44 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16.h),
+          // Appearance
+          _Card(
+            isDark: isDark,
+            cs: cs,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.brightness_6_outlined,
+                          size: 20.r,
+                          color: cs.onSurface,
+                        ),
+                        SizedBox(width: 14.w),
+                        Text(
+                          'Appearance',
+                          style: AppTextStyles.body(color: cs.onSurface),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    _ThemeSegment(
+                      current: themeMode,
+                      isDark: isDark,
+                      cs: cs,
+                      onChanged: (mode) =>
+                          ref.read(themeProvider.notifier).setTheme(mode),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
           // Feature settings
           _Card(
             isDark: isDark,
@@ -238,6 +279,126 @@ class _Card extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children,
+      ),
+    );
+  }
+}
+
+class _ThemeSegment extends StatelessWidget {
+  final ThemeMode current;
+  final bool isDark;
+  final ColorScheme cs;
+  final void Function(ThemeMode) onChanged;
+
+  const _ThemeSegment({
+    required this.current,
+    required this.isDark,
+    required this.cs,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(3.r),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurfaceElevated : AppColors.lightSurfaceElevated,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _ThemeChip(
+              icon: Icons.brightness_auto_outlined,
+              label: 'Auto',
+              selected: current == ThemeMode.system,
+              isDark: isDark,
+              cs: cs,
+              onTap: () => onChanged(ThemeMode.system),
+            ),
+          ),
+          Expanded(
+            child: _ThemeChip(
+              icon: Icons.light_mode_outlined,
+              label: 'Light',
+              selected: current == ThemeMode.light,
+              isDark: isDark,
+              cs: cs,
+              onTap: () => onChanged(ThemeMode.light),
+            ),
+          ),
+          Expanded(
+            child: _ThemeChip(
+              icon: Icons.dark_mode_outlined,
+              label: 'Dark',
+              selected: current == ThemeMode.dark,
+              isDark: isDark,
+              cs: cs,
+              onTap: () => onChanged(ThemeMode.dark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ThemeChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final bool isDark;
+  final ColorScheme cs;
+  final VoidCallback onTap;
+
+  const _ThemeChip({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.isDark,
+    required this.cs,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: EdgeInsets.symmetric(vertical: 7.h),
+        decoration: BoxDecoration(
+          color: selected
+              ? (isDark ? Colors.white : Colors.black)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(7.r),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 14.r,
+              color: selected
+                  ? (isDark ? Colors.black : Colors.white)
+                  : cs.onSurfaceVariant,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                color: selected
+                    ? (isDark ? Colors.black : Colors.white)
+                    : cs.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
