@@ -29,49 +29,70 @@ class SuggestionChipsEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.waving_hand_rounded, size: 44.r, color: cs.onSurface)
-                .animate()
-                .fadeIn(duration: 500.ms)
-                .scaleXY(
-                  begin: 0.8,
-                  end: 1.0,
-                  duration: 500.ms,
-                  curve: Curves.easeOut,
+    // LayoutBuilder + SingleChildScrollView + ConstrainedBox(minHeight):
+    // - When keyboard is closed: content is centered vertically as before.
+    // - When keyboard opens and shrinks the available height: the view scrolls
+    //   instead of overflowing.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24.w,
+                  vertical: 24.h,
                 ),
-            SizedBox(height: 18.h),
-            Text(
-              'What can Manus help\nyou accomplish?',
-              style: AppTextStyles.h2(color: cs.onSurface),
-              textAlign: TextAlign.center,
-            ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
-            SizedBox(height: 8.h),
-            Text(
-              'Research, code, write, and execute — end to end.',
-              style: AppTextStyles.body(color: cs.onSurfaceVariant),
-              textAlign: TextAlign.center,
-            ).animate().fadeIn(duration: 400.ms, delay: 220.ms),
-            SizedBox(height: 36.h),
-            Wrap(
-              spacing: 10.w,
-              runSpacing: 10.h,
-              alignment: WrapAlignment.center,
-              children: _suggestions.asMap().entries.map((e) {
-                return _SuggestionChipItem(
-                  text: e.value,
-                  delayMs: 300 + e.key * 80,
-                  onTap: onChipTap,
-                );
-              }).toList(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                          Icons.waving_hand_rounded,
+                          size: 44.r,
+                          color: cs.onSurface,
+                        )
+                        .animate()
+                        .fadeIn(duration: 500.ms)
+                        .scaleXY(
+                          begin: 0.8,
+                          end: 1.0,
+                          duration: 500.ms,
+                          curve: Curves.easeOut,
+                        ),
+                    SizedBox(height: 18.h),
+                    Text(
+                      'What can Manus help\nyou accomplish?',
+                      style: AppTextStyles.h2(color: cs.onSurface),
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Research, code, write, and execute — end to end.',
+                      style: AppTextStyles.body(color: cs.onSurfaceVariant),
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(duration: 400.ms, delay: 220.ms),
+                    SizedBox(height: 36.h),
+                    Wrap(
+                      spacing: 10.w,
+                      runSpacing: 10.h,
+                      alignment: WrapAlignment.center,
+                      children: _suggestions.asMap().entries.map((e) {
+                        return _SuggestionChipItem(
+                          text: e.value,
+                          delayMs: 300 + e.key * 80,
+                          onTap: onChipTap,
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
