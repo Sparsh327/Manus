@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:manus/core/error/exception.dart';
-import 'package:manus/data/data_sources/local/product_local_data_source.dart';
+
 import 'package:path_provider/path_provider.dart';
 
 class HiveService {
@@ -16,7 +16,7 @@ class HiveService {
     final appDocumentDir = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDir.path);
     await Future.wait([
-      Hive.openBox(cachedProducts),
+
       Hive.openBox(settingsBox),
       Hive.openBox(conversationsBox),
       Hive.openBox(chatMessagesBox),
